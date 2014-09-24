@@ -121,7 +121,7 @@ matrix_3x3 matrix_3x3::create_look_at(vector_3 target)
 {
     vector_3 z_row = target.get_normal();
     vector_3 x_row = vector_3(1, 0, -target.x/target.z).get_normal();
-    vector_3 y_row = vector_3::cross(z_row, x_row).get_normal();
+    vector_3 y_row = vector_3(0, 1, -target.y/target.z).get_normal();
 
    // x_row.debug("x_row");
    // y_row.debug("y_row");
@@ -154,7 +154,7 @@ void matrix_3x3::debug(char* title)
 	{
 		for(int j=0; j<3; j++)
 		{
-			SERIAL_PROTOCOL(matrix[count]);
+			SERIAL_PROTOCOL_F(matrix[count], 6);
 			SERIAL_PROTOCOLPGM(" ");
 		        count++;
 		}
