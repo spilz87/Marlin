@@ -1087,11 +1087,6 @@ static void engage_z_probe() {
 
 static void retract_z_probe() {
     // Retract Z Servo endstop if enabled
-    #if defined (ENABLE_AUTO_BED_LEVELING) && (PROBE_SERVO_DEACTIVATION_DELAY > 0)
-        if (axis==Z_AXIS)
-            do_blocking_move_relative(0, 0, Z_RAISE_BEFORE_PROBING);
-    #endif
-
     #ifdef SERVO_ENDSTOPS
     if (servo_endstops[Z_AXIS] > -1) {
 #if defined (ENABLE_AUTO_BED_LEVELING) && (PROBE_SERVO_DEACTIVATION_DELAY > 0)
@@ -1201,6 +1196,11 @@ static void homeaxis(int axis) {
     axis_known_position[axis] = true;
 
     // Retract Servo endstop if enabled
+    #if defined (ENABLE_AUTO_BED_LEVELING) && (PROBE_SERVO_DEACTIVATION_DELAY > 0)
+        if (axis==Z_AXIS)
+            do_blocking_move_relative(0, 0, Z_RAISE_BEFORE_PROBING);
+    #endif
+
     #ifdef SERVO_ENDSTOPS
       if (servo_endstops[axis] > -1) {
         servos[servo_endstops[axis]].write(servo_endstop_angles[axis * 2 + 1]);
