@@ -1694,22 +1694,54 @@ int retract_flag=0, verbose_level=1, topo_flag=0, n_points=3;
 
             feedrate = homing_feedrate[Z_AXIS];
 #ifdef AUTO_BED_LEVELING_GRID
-            // probe at the points of a lattice grid
+		int r_probe_bed_position = RIGHT_PROBE_BED_POSITION;
+		int l_probe_bed_position = LEFT_PROBE_BED_POSITION;
+		int f_probe_bed_position = FRONT_PROBE_BED_POSITION;
+		int b_probe_bed_position = BACK_PROBE_BED_POSITION;
+		int a_bed_leveling_points = AUTO_BED_LEVELING_GRID_POINTS;
+		if(code_seen('R')) {
+			r_probe_bed_position = code_value();
+		}
 
-            int xGridSpacing = (RIGHT_PROBE_BED_POSITION - LEFT_PROBE_BED_POSITION) / (n_points-1);
-            int yGridSpacing = (BACK_PROBE_BED_POSITION - FRONT_PROBE_BED_POSITION) / (n_points-1);
+		if(code_seen('L')) {
+			l_probe_bed_position = code_value();
+		}
 
+		if(code_seen('F')) {
+			f_probe_bed_position = code_value();
+		}
 
-            // solve the plane equation ax + by + d = z
+		if(code_seen('B')) {
+			b_probe_bed_position = code_value();
+		}
+
+		if(code_seen('A')) {
+			a_bed_leveling_points = code_value();
+		}
+
+		if((f_probe_bed_position == b_probe_bed_position) || (r_probe_bed_position == l_probe_bed_position)) {
+			SERIAL_ERROR_START;
+			SERIAL_ERRORLNPGM(MSG_EMPTY_PLANE);
+
+			Stop();
+			return;
+		}
+
+		// probe at the points of a lattice grid
+		int xGridSpacing = (r_probe_bed_position - l_probe_bed_position) / (a_bed_leveling_points-1);
+		int yGridSpacing = (b_probe_bed_position - f_probe_bed_position) / (a_bed_leveling_points-1);
+
+		// solve the plane equation ax + by + d = z
             // A is the matrix with rows [x y 1] for all the probed points
             // B is the vector of the Z positions
             // the normal vector to the plane is formed by the coefficients of the plane equation in the standard form, which is Vx*x+Vy*y+Vz*z+d = 0
             // so Vx = -a Vy = -b Vz = 1 (we want the vector facing towards positive Z
 
             // "A" matrix of the linear system of equations
-            double eqnAMatrix[AUTO_BED_LEVELING_GRID_POINTS*AUTO_BED_LEVELING_GRID_POINTS*3];
+            double* eqnAMatrix = (double*)malloc(sizeof(double) * (a_bed_leveling_points*a_bed_leveling_points*3));
             // "B" vector of Z points
-            double eqnBVector[AUTO_BED_LEVELING_GRID_POINTS*AUTO_BED_LEVELING_GRID_POINTS];
+            double* eqnBVector = (double*)malloc(sizeof(double) * (a_bed_leveling_points*a_bed_leveling_points));
+            
 
 	    double mean=0.0;
 
@@ -1717,7 +1749,7 @@ int retract_flag=0, verbose_level=1, topo_flag=0, n_points=3;
             int probePointCounter = 0;
             bool zig = true;
 
-            for (int yProbe=FRONT_PROBE_BED_POSITION; yProbe <= BACK_PROBE_BED_POSITION; yProbe += yGridSpacing)
+	    for (int yProbe=f_probe_bed_position; yProbe <= b_probe_bed_position; yProbe += yGridSpacing)
             {
               int xProbe, xInc;
 
@@ -1730,19 +1762,17 @@ int retract_flag=0, verbose_level=1, topo_flag=0, n_points=3;
 
               if (zig)
               {
-                xProbe = LEFT_PROBE_BED_POSITION;
-                //xEnd = RIGHT_PROBE_BED_POSITION;
+		xProbe = l_probe_bed_position;
                 xInc = xGridSpacing;
                 zig = false;
               } else // zag
               {
-                xProbe = RIGHT_PROBE_BED_POSITION;
-                //xEnd = LEFT_PROBE_BED_POSITION;
+		xProbe = r_probe_bed_position;
                 xInc = -xGridSpacing;
                 zig = true;
               }
 
-              for (int xCount=0; xCount < n_points; xCount++)
+              for (int xCount=0; xCount < a_bed_leveling_points; xCount++)
               {
                 float z_before;
                 if (probePointCounter == 0)
@@ -1761,9 +1791,9 @@ int retract_flag=0, verbose_level=1, topo_flag=0, n_points=3;
 
                 eqnBVector[probePointCounter] = measured_z;
 
-                eqnAMatrix[probePointCounter + 0*n_points*n_points] = xProbe;
-                eqnAMatrix[probePointCounter + 1*n_points*n_points] = yProbe;
-                eqnAMatrix[probePointCounter + 2*n_points*n_points] = 1;
+                eqnAMatrix[probePointCounter + 0*a_bed_leveling_points*a_bed_leveling_points] = xProbe;
+                eqnAMatrix[probePointCounter + 1*a_bed_leveling_points*a_bed_leveling_points] = yProbe;
+                eqnAMatrix[probePointCounter + 2*a_bed_leveling_points*a_bed_leveling_points] = 1;
 
                 probePointCounter++;
                 xProbe += xInc;
@@ -1773,7 +1803,7 @@ int retract_flag=0, verbose_level=1, topo_flag=0, n_points=3;
             clean_up_after_endstop_move();
 
             // solve lsq problem
-            double *plane_equation_coefficients = qr_solve(n_points*n_points, 3, eqnAMatrix, eqnBVector);
+            double *plane_equation_coefficients = qr_solve(a_bed_leveling_points*a_bed_leveling_points, 3, eqnAMatrix, eqnBVector);
 
 	    if (verbose_level ) {
 
