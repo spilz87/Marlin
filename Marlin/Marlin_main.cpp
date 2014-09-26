@@ -1657,7 +1657,7 @@ int retract_flag=0, verbose_level=1, topo_flag=0, n_points=3;
 		}
 	}
 
-	if ( code_seen('n') ) {
+	if ( code_seen('n') || code_seen('U') || code_seen('u') ) {
 		n_points = code_value();
 		if (n_points<2 || n_points>AUTO_BED_LEVELING_GRID_POINTS ) {
 			SERIAL_PROTOCOLPGM("?Number of probed points not plausable.\n");
