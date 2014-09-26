@@ -1,6 +1,12 @@
+
 ==========================
 Marlin 3D Printer Firmware
 ==========================
+
+Fork for MakerFarm i3v that supports auto bed leveling (ABL), Roxy's enhanced G29 command, dynamic ABL (from bonm14: https://github.com/ErikZalm/Marlin/pull/1022 ).
+
+===================
+
 [![Coverity Scan Build Status](https://scan.coverity.com/projects/2224/badge.svg)](https://scan.coverity.com/projects/2224)
 
 Marlin has a GPL license because I believe in open development.
