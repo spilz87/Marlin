@@ -412,10 +412,18 @@ const bool Z_MAX_ENDSTOP_INVERTING = false; // set to true to invert the logic o
     #define BACK_PROBE_BED_POSITION 175
     #define FRONT_PROBE_BED_POSITION 50
 
-     // set the number of grid points per dimension
-     // I wouldn't see a reason to go above 3 (=9 probing points on the bed)
+    // set the max number of grid points per dimension
+    // The G29 command defaults to 3 if nothing is specified.  But setting the number of probed 
+    // points higher is very useful when getting a Bed Topology Report  (G29 n 5 T)
     #define AUTO_BED_LEVELING_GRID_POINTS 5
 
+    // Uncomment one of the following four lines so the Bed Topology Report can produce a map
+    // that relates accurately to your bed orientation.  
+
+    #define ORIGIN_FRONT_LEFT
+    //#define ORIGIN_BACK_LEFT
+    //#define ORIGIN_FRONT_RIGHT
+    //#define ORIGIN_BACK_RIGHT
 
   #else  // not AUTO_BED_LEVELING_GRID
     // with no grid, just probe 3 arbitrary points.  A simple cross-product
