@@ -1686,7 +1686,8 @@ int retract_flag=0, verbose_level=1, topo_flag=0, n_points=3;
 			break;
 		}
 		if (verbose_level>0 ) {
-			SERIAL_PROTOCOLPGM("Roxy's Enhanced G29 Auto_Bed_Leveling Code V1.01:\n");
+			SERIAL_PROTOCOLPGM("Roxy's Enhanced G29 Auto_Bed_Leveling Code V1.81:\n");
+			SERIAL_PROTOCOLPGM("Full support at http://3dprintboard.com \n");
 			if (verbose_level>2 ) {
 				topo_flag++;
 			}
@@ -1772,6 +1773,14 @@ int retract_flag=0, verbose_level=1, topo_flag=0, n_points=3;
             double* eqnAMatrix = (double*)malloc(sizeof(double) * (n_points*n_points*3));
             // "B" vector of Z points
             double* eqnBVector = (double*)malloc(sizeof(double) * (n_points*n_points));
+	    if ( eqnAMatrix==NULL || eqnBVector==NULL) {
+		    SERIAL_PROTOCOLPGM("?Memory not available for Auto Bed Leveling.\n");
+		    if (eqnAVector)
+			 free(eqnAVector);
+		    if (eqnBVector)
+			 free(eqnBVector);
+		    break;
+            }
             
 
 	    double mean=0.0;
@@ -1927,6 +1936,8 @@ int xx,yy;
             set_bed_level_equation_lsq(plane_equation_coefficients);
 
             free(plane_equation_coefficients);
+            free(eqnAVector);
+            free(eqnBVector);
 
 #else // AUTO_BED_LEVELING_GRID not defined
 
@@ -1943,6 +1954,10 @@ int xx,yy;
             clean_up_after_endstop_move();
 
             set_bed_level_equation_3pts(z_at_pt_1, z_at_pt_2, z_at_pt_3);
+
+            free(plane_equation_coefficients);
+            free(eqnAVector);
+            free(eqnBVector);
 
 
 #endif // AUTO_BED_LEVELING_GRID
