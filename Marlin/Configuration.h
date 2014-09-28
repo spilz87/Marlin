@@ -417,7 +417,7 @@ const bool Z_MAX_ENDSTOP_INVERTING = false; // set to true to invert the logic o
     // points higher is very useful when getting a Bed Topology Report  (G29 n 5 T)
     #define AUTO_BED_LEVELING_GRID_POINTS 5
 
-    // Uncomment one of the following four lines so the Bed Topology Report can produce a map
+    // Uncomment one of the following four lines so the G29 Bed Topology Report can produce a map
     // that relates accurately to your bed orientation.  
 
     #define ORIGIN_FRONT_LEFT
