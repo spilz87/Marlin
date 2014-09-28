@@ -1,0 +1,30 @@
+﻿Build started 9/27/2014 2:56:22 PM.
+     1>Project "C:\Tmp\G29-Post-Processor\G29-Post-Processor\G29-Post-Processor\G29-Post-Processor.vcxproj" on node 2 (build target(s)).
+     1>InitializeBuildStatus:
+         Creating "Debug\G29-Post-Processor.unsuccessfulbuild" because "AlwaysCreate" was specified.
+       GenerateTargetFrameworkMonikerAttribute:
+       Skipping target "GenerateTargetFrameworkMonikerAttribute" because all output files are up-to-date with respect to the input files.
+       ClCompile:
+         All outputs are up-to-date.
+         c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\CL.exe /c /AI"C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0" /Zi /clr /nologo /W3 /WX- /Od /Oy- /D WIN32 /D _DEBUG /D _UNICODE /D UNICODE /EHa /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Yu"StdAfx.h" /Fp"Debug\G29-Post-Processor.pch" /Fo"Debug\\" /Fd"Debug\vc100.pdb" /TP /FU"C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0\System.Core.dll" /FU"C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0\System.Data.dll" /FU"C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0\System.dll" /FU"C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0\System.Xml.dll" /analyze- /errorReport:prompt "G29-Post-Processor.cpp" /clr:nostdlib 
+         G29-Post-Processor.cpp
+         All outputs are up-to-date.
+       ResourceCompile:
+         All outputs are up-to-date.
+       Link:
+         c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Tmp\G29-Post-Processor\G29-Post-Processor\Debug\G29-Post-Processor.exe" /INCREMENTAL /NOLOGO /MANIFEST /ManifestFile:"Debug\G29-Post-Processor.exe.intermediate.manifest" /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /DEBUG /PDB:"C:\Tmp\G29-Post-Processor\G29-Post-Processor\Debug\G29-Post-Processor.pdb" /ASSEMBLYDEBUG /TLBID:1 /DYNAMICBASE /FIXED:NO /NXCOMPAT /MACHINE:X86 Debug\app.res
+         Debug\AssemblyInfo.obj
+         "Debug\G29-Post-Processor.obj"
+         Debug\stdafx.obj
+         "Debug\.NETFramework,Version=v4.0.AssemblyAttributes.obj"
+         G29-Post-Processor.vcxproj -> C:\Tmp\G29-Post-Processor\G29-Post-Processor\Debug\G29-Post-Processor.exe
+       Manifest:
+         C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\bin\mt.exe /nologo /verbose /outputresource:"C:\Tmp\G29-Post-Processor\G29-Post-Processor\Debug\G29-Post-Processor.exe;#1" /manifest "Debug\G29-Post-Processor.exe.intermediate.manifest"
+       FinalizeBuildStatus:
+         Deleting file "Debug\G29-Post-Processor.unsuccessfulbuild".
+         Touching "Debug\G29-Post-Processor.lastbuildstate".
+     1>Done Building Project "C:\Tmp\G29-Post-Processor\G29-Post-Processor\G29-Post-Processor\G29-Post-Processor.vcxproj" (build target(s)).
+
+Build succeeded.
+
+Time Elapsed 00:00:02.30
