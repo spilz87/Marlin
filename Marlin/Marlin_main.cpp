@@ -1775,8 +1775,8 @@ int retract_flag=0, verbose_level=1, topo_flag=0, n_points=3;
             double* eqnBVector = (double*)malloc(sizeof(double) * (n_points*n_points));
 	    if ( eqnAMatrix==NULL || eqnBVector==NULL) {
 		    SERIAL_PROTOCOLPGM("?Memory not available for Auto Bed Leveling.\n");
-		    if (eqnAVector)
-			 free(eqnAVector);
+		    if (eqnAMatrix)
+			 free(eqnAMatrix);
 		    if (eqnBVector)
 			 free(eqnBVector);
 		    break;
@@ -1936,7 +1936,7 @@ int xx,yy;
             set_bed_level_equation_lsq(plane_equation_coefficients);
 
             free(plane_equation_coefficients);
-            free(eqnAVector);
+            free(eqnAMatrix);
             free(eqnBVector);
 
 #else // AUTO_BED_LEVELING_GRID not defined
