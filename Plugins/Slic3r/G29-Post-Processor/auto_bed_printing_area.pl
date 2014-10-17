@@ -19,7 +19,7 @@ my $y_min; #Y max, overwrites BACK_PROBE_BED_POSITION
 #read X/Y values from inputstream and store the current stream in a temporary file
 #--------------
 open(tmp_file,">".$temp_file) || die ("Cannot create a temporary file") ;
-print "$temp_file\n";
+#$^I = '.bak'; for m$ only
 while (<>) {
         if (/^(G1\sX(\d+(?:\.\d+)?)\sY(\d+(?:\.\d+)?)\s)/) {
                 $x_max = $2 ;
