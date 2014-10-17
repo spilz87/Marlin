@@ -6,8 +6,9 @@ Marlin 3D Printer Firmware
 Fork of Marlin for Prusa i3 that supports 
 *   auto bed leveling (ABL), 
 *   Roxy's enhanced G29 command (http://3dprintboard.com/showthread.php?3105-Auto_Bed_Leveling-Enhanced-G29-command/),
-*   dynamic ABL (from bonm14: https://github.com/ErikZalm/Marlin/pull/1022 )
-*   last commits from Marlin (16/10/14) 
+*   dynamic ABL (from bonm14: https://github.com/ErikZalm/Marlin/pull/1022),
+*   new post-processing script for slic3r (replaces the gcode  "G29 L[G29XMIN] F[G29YMIN] R[G29XMAX] B[G29YMAX] n4" by "G29 L10 F20 R50 B40 n4" for example),
+*   last commits from Marlin (16/10/14).
 
 ===================
 
