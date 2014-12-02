@@ -1916,15 +1916,15 @@ int xx,yy;
 #endif  // ORIGIN_FRONT_LEFT
 
 #ifdef ORIGIN_FRONT_RIGHT
-	for(yy=n_points-1; yy>=0; yy--) {
-		for(xx=n_points-1; xx>=0; xx--) { 
-		    SERIAL_PROTOCOLPGM(" ");
-		    if ( eqnBVector[yy+xx*n_points]-mean >= 0.0)
-		    	SERIAL_PROTOCOLPGM("+");
-		    else
-		    	SERIAL_PROTOCOLPGM("-");	// we need this extra - because Proterface uses a preportional
-		    					// font and it causes the columns to not line up nice without it.
-		    SERIAL_PROTOCOL_F( eqnBVector[n_points*n_points-yy-n_points*xx-1]-mean, 5);
+	for(yy=0; yy<n_points; yy++ {
+		for(xx=0; xx<n_points; xx++) { 
+			SERIAL_PROTOCOLPGM(" ");
+			if ( eqnBVector[ (n_points*n_points)-yy-(xx*n_points)-1 ]-mean >= 0.0)
+				SERIAL_PROTOCOLPGM("+");
+			else
+				SERIAL_PROTOCOLPGM("-"); // we need this extra - because Proterface uses a preportional
+			// font and it causes the columns to not line up nice without it.
+			SERIAL_PROTOCOL_F( eqnBVector[ (n_points*n_points)-yy-(xx*n_points)-1 ]-mean, 5);
 		}
 		SERIAL_PROTOCOLPGM(" \n");
 	}
