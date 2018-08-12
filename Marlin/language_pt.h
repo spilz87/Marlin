@@ -24,15 +24,16 @@
  * Portuguese
  *
  * LCD Menu Messages
- * See also https://github.com/MarlinFirmware/Marlin/wiki/LCD-Language
+ * See also http://marlinfw.org/docs/development/lcd_language.html
  *
  */
 #ifndef LANGUAGE_PT_H
 #define LANGUAGE_PT_H
 
 #define DISPLAY_CHARSET_ISO10646_1
+#define NOT_EXTENDED_ISO10646_1_5X7
 
-#define WELCOME_MSG                         MACHINE_NAME " pronto."
+#define WELCOME_MSG                         MACHINE_NAME " pronta."
 #define MSG_SD_INSERTED                     "Cartao inserido"
 #define MSG_SD_REMOVED                      "Cartao removido"
 #define MSG_MAIN                            "Menu principal"
@@ -42,11 +43,11 @@
 #define MSG_AUTO_HOME_X                     "Ir para origem X"
 #define MSG_AUTO_HOME_Y                     "Ir para origem Y"
 #define MSG_AUTO_HOME_Z                     "Ir para origem Z"
+#define MSG_TMC_Z_CALIBRATION               "Calibrar Z"
 #define MSG_LEVEL_BED_HOMING                "Indo para origem"
 #define MSG_LEVEL_BED_WAITING               "Click para iniciar"
 #define MSG_LEVEL_BED_NEXT_POINT            "Proximo ponto"
 #define MSG_LEVEL_BED_DONE                  "Pronto !"
-#define MSG_LEVEL_BED_CANCEL                "Cancelar"
 #define MSG_SET_HOME_OFFSETS                "Definir desvio"
 #define MSG_HOME_OFFSETS_APPLIED            "Offsets applied"
 #define MSG_SET_ORIGIN                      "Definir origem"
@@ -91,9 +92,16 @@
 #define MSG_PID_D                           "PID-D"
 #define MSG_PID_C                           "PID-C"
 #define MSG_ACC                             "Acc"
-#define MSG_VX_JERK                         "Vx-jerk"
-#define MSG_VY_JERK                         "Vy-jerk"
-#define MSG_VZ_JERK                         "Vz-jerk"
+#define MSG_JERK                            "Jerk"
+#if IS_KINEMATIC
+  #define MSG_VA_JERK                       "Va-jerk"
+  #define MSG_VB_JERK                       "Vb-jerk"
+  #define MSG_VC_JERK                       "Vc-jerk"
+#else
+  #define MSG_VA_JERK                       "Vx-jerk"
+  #define MSG_VB_JERK                       "Vy-jerk"
+  #define MSG_VC_JERK                       "Vz-jerk"
+#endif
 #define MSG_VE_JERK                         "Ve-jerk"
 #define MSG_VMAX                            " Vmax "
 #define MSG_VMIN                            "Vmin"
@@ -101,18 +109,30 @@
 #define MSG_AMAX                            "Amax "
 #define MSG_A_RETRACT                       "A-retraccao"
 #define MSG_A_TRAVEL                        "A-movimento"
-#define MSG_XSTEPS                          "X passo/mm"
-#define MSG_YSTEPS                          "Y passo/mm"
-#define MSG_ZSTEPS                          "Z passo/mm"
+#define MSG_STEPS_PER_MM                    "Passo/mm"
+#if IS_KINEMATIC
+  #define MSG_ASTEPS                        "A passo/mm"
+  #define MSG_BSTEPS                        "B passo/mm"
+  #define MSG_CSTEPS                        "C passo/mm"
+#else
+  #define MSG_ASTEPS                        "X passo/mm"
+  #define MSG_BSTEPS                        "Y passo/mm"
+  #define MSG_CSTEPS                        "Z passo/mm"
+#endif
 #define MSG_ESTEPS                          "E passo/mm"
+#define MSG_E1STEPS                         "E1 passo/mm"
+#define MSG_E2STEPS                         "E2 passo/mm"
+#define MSG_E3STEPS                         "E3 passo/mm"
+#define MSG_E4STEPS                         "E4 passo/mm"
+#define MSG_E5STEPS                         "E5 passo/mm"
 #define MSG_TEMPERATURE                     "Temperatura"
 #define MSG_MOTION                          "Movimento"
-#define MSG_VOLUMETRIC                      "Filamento"
+#define MSG_FILAMENT                        "Filamento"
 #define MSG_VOLUMETRIC_ENABLED              "E em mm3"
 #define MSG_FILAMENT_DIAM                   "Fil. Diam."
 #define MSG_CONTRAST                        "Contraste"
-#define MSG_STORE_EPROM                     "Guardar na memoria"
-#define MSG_LOAD_EPROM                      "Carregar da memoria"
+#define MSG_STORE_EEPROM                    "Guardar na memoria"
+#define MSG_LOAD_EEPROM                     "Carregar da memoria"
 #define MSG_RESTORE_FAILSAFE                "Rest. de emergen."
 #define MSG_REFRESH                         LCD_STR_REFRESH " Recarregar"
 #define MSG_WATCH                           "Monitorizar"
@@ -125,7 +145,6 @@
 #define MSG_NO_CARD                         "Sem cartao SD"
 #define MSG_DWELL                           "Em espera..."
 #define MSG_USERWAIT                        "A espera de ordem"
-#define MSG_RESUMING                        "Retomando impressao"
 #define MSG_PRINT_ABORTED                   "Impressao cancelada"
 #define MSG_NO_MOVE                         "Sem movimento"
 #define MSG_KILLED                          "EMERGENCIA. "
@@ -134,8 +153,8 @@
 #define MSG_CONTROL_RETRACT_SWAP            "Troca Retrair mm"
 #define MSG_CONTROL_RETRACTF                " Retrair  V"
 #define MSG_CONTROL_RETRACT_ZLIFT           " Levantar mm"
-#define MSG_CONTROL_RETRACT_RECOVER         " DesRet +mm"
-#define MSG_CONTROL_RETRACT_RECOVER_SWAP    "Troca DesRet +mm"
+#define MSG_CONTROL_RETRACT_RECOVER         " DesRet mm"
+#define MSG_CONTROL_RETRACT_RECOVER_SWAP    "Troca DesRet mm"
 #define MSG_CONTROL_RETRACT_RECOVERF        " DesRet  V"
 #define MSG_AUTORETRACT                     " AutoRetr."
 #define MSG_FILAMENTCHANGE                  "Trocar filamento"
@@ -157,9 +176,7 @@
 #define MSG_ERR_MAXTEMP_BED                 "Err: T Base Maxima"
 #define MSG_ERR_MINTEMP_BED                 "Err: T Base Minima"
 #define MSG_HEATING                         "Aquecendo..."
-#define MSG_HEATING_COMPLETE                "Aquecida."
 #define MSG_BED_HEATING                     "Aquecendo base.."
-#define MSG_BED_DONE                        "Base aquecida."
 #define MSG_DELTA_CALIBRATE                 "Calibracao Delta"
 #define MSG_DELTA_CALIBRATE_X               "Calibrar X"
 #define MSG_DELTA_CALIBRATE_Y               "Calibrar Y"

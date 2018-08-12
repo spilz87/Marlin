@@ -24,7 +24,7 @@
  * Japanese (Kana)
  *
  * LCD Menu Messages
- * See also https://github.com/MarlinFirmware/Marlin/wiki/LCD-Language
+ * See also http://marlinfw.org/docs/development/lcd_language.html
  *
  */
 
@@ -34,6 +34,7 @@
 // Define SIMULATE_ROMFONT to see what is seen on the character based display defined in Configuration.h
 #define SIMULATE_ROMFONT
 #define DISPLAY_CHARSET_ISO10646_KANA
+#define CHARSIZE 2
 
 // 片仮名表示定義
 #define WELCOME_MSG                         MACHINE_NAME " ready."
@@ -43,15 +44,17 @@
 #define MSG_MAIN                            "\xd2\xb2\xdd"                                                     // "ﾒｲﾝ" ("Main")
 #define MSG_AUTOSTART                       "\xbc\xde\xc4\xde\xb3\xb6\xb2\xbc"                                 // "ｼﾞﾄﾞｳｶｲｼ" ("Autostart")
 #define MSG_DISABLE_STEPPERS                "\xd3\xb0\xc0\xb0\xc3\xde\xdd\xb9\xde\xdd\x20\xb5\xcc"             // "ﾓｰﾀｰﾃﾞﾝｹﾞﾝ ｵﾌ" ("Disable steppers")
+#define MSG_DEBUG_MENU                      "\xc3\xde\xca\xde\xaf\xb8\xde\xd2\xc6\xad\xb0"                     // "ﾃﾞﾊﾞｯｸﾞﾒﾆｭｰ" ("Debug Menu")
+#define MSG_PROGRESS_BAR_TEST               "\xcc\xdf\xdb\xb8\xde\xda\xbd\xca\xde\xb0\x20\xc3\xbd\xc4"         // "ﾌﾟﾛｸﾞﾚｽﾊﾞｰ ﾃｽﾄ" ("Progress Bar Test")
 #define MSG_AUTO_HOME                       "\xb9\xde\xdd\xc3\xdd\xcc\xaf\xb7"                                 // "ｹﾞﾝﾃﾝﾌｯｷ" ("Auto home")
 #define MSG_AUTO_HOME_X                     "X\xbc\xde\xb8\x20\xb9\xde\xdd\xc3\xdd\xcc\xaf\xb7"                // "Xｼﾞｸ ｹﾞﾝﾃﾝﾌｯｷ" ("Home X")
 #define MSG_AUTO_HOME_Y                     "Y\xbc\xde\xb8\x20\xb9\xde\xdd\xc3\xdd\xcc\xaf\xb7"                // "Yｼﾞｸ ｹﾞﾝﾃﾝﾌｯｷ" ("Home Y")
 #define MSG_AUTO_HOME_Z                     "Z\xbc\xde\xb8\x20\xb9\xde\xdd\xc3\xdd\xcc\xaf\xb7"                // "Zｼﾞｸ ｹﾞﾝﾃﾝﾌｯｷ" ("Home Z")
+#define MSG_TMC_Z_CALIBRATION               "Z\xbc\xde\xb8\x20\xba\xb3\xbe\xb2"                                // "Zｼﾞｸ ｺｳｾｲ" ("Calibrate Z")
 #define MSG_LEVEL_BED_HOMING                "\xb9\xde\xdd\xc3\xdd\xcc\xaf\xb7\xc1\xad\xb3"                     // "ｹﾞﾝﾃﾝﾌｯｷﾁｭｳ" ("Homing XYZ")
 #define MSG_LEVEL_BED_WAITING               "\xda\xcd\xde\xd8\xdd\xb8\xde\xb6\xb2\xbc"                         // "ﾚﾍﾞﾘﾝｸﾞｶｲｼ" ("Click to Begin")
 #define MSG_LEVEL_BED_NEXT_POINT            "\xc2\xb7\xde\xc9\xbf\xb8\xc3\xb2\xc3\xdd\xcd"                     // "ﾂｷﾞﾉｿｸﾃｲﾃﾝﾍ" ("Next Point")
 #define MSG_LEVEL_BED_DONE                  "\xda\xcd\xde\xd8\xdd\xb8\xde\xb6\xdd\xd8\xae\xb3"                 // "ﾚﾍﾞﾘﾝｸﾞｶﾝﾘｮｳ" ("Leveling Done!")
-#define MSG_LEVEL_BED_CANCEL                "\xc4\xd8\xd4\xd2"                                                 // "ﾄﾘﾔﾒ" ("Cancel")
 #define MSG_SET_HOME_OFFSETS                "\xb7\xbc\xde\xad\xdd\xb5\xcc\xbe\xaf\xc4\xbe\xaf\xc3\xb2"         // "ｷｼﾞｭﾝｵﾌｾｯﾄｾｯﾃｲ" ("Set home offsets")
 #define MSG_HOME_OFFSETS_APPLIED            "\xb5\xcc\xbe\xaf\xc4\xb6\xde\xc3\xb7\xd6\xb3\xbb\xda\xcf\xbc\xc0" // "ｵﾌｾｯﾄｶﾞﾃｷﾖｳｻﾚﾏｼﾀ" ("Offsets applied")
 #define MSG_SET_ORIGIN                      "\xb7\xbc\xde\xad\xdd\xbe\xaf\xc4"                                 // "ｷｼﾞｭﾝｾｯﾄ" ("Set origin")
@@ -71,7 +74,10 @@
 #define MSG_EXTRUDE                         "\xb5\xbc\xc0\xde\xbc"                                             // "ｵｼﾀﾞｼ" ("Extrude")
 #define MSG_RETRACT                         "\xcb\xb7\xba\xd0\xbe\xaf\xc3\xb2"                                 // "ﾋｷｺﾐｾｯﾃｲ" ("Retract")
 #define MSG_MOVE_AXIS                       "\xbc\xde\xb8\xb2\xc4\xde\xb3"                                     // "ｼﾞｸｲﾄﾞｳ" ("Move axis")
+#define MSG_BED_LEVELING                    "\xcd\xde\xaf\xc4\xde\xda\xcd\xde\xd8\xdd\xb8\xde"                 // "ﾍﾞｯﾄﾞﾚﾍﾞﾘﾝｸﾞ" ("Bed Leveling")
 #define MSG_LEVEL_BED                       "\xcd\xde\xaf\xc4\xde\xda\xcd\xde\xd8\xdd\xb8\xde"                 // "ﾍﾞｯﾄﾞﾚﾍﾞﾘﾝｸﾞ" ("Level bed")
+#define MSG_MOVING                          "\xb2\xc4\xde\xb3\xc1\xad\xb3"                                     // "ｲﾄﾞｳﾁｭｳ" ("Moving...")
+#define MSG_FREE_XY                         "XY\xbc\xde\xb8\x20\xb6\xb2\xce\xb3"                               // "XYｼﾞｸ ｶｲﾎｳ" ("Free XY")
 #define MSG_MOVE_X                          "X\xbc\xde\xb8\x20\xb2\xc4\xde\xb3"                                // "Xｼﾞｸ ｲﾄﾞｳ" ("Move X")
 #define MSG_MOVE_Y                          "Y\xbc\xde\xb8\x20\xb2\xc4\xde\xb3"                                // "Yｼﾞｸ ｲﾄﾞｳ" ("Move Y")
 #define MSG_MOVE_Z                          "Z\xbc\xde\xb8\x20\xb2\xc4\xde\xb3"                                // "Zｼﾞｸ ｲﾄﾞｳ" ("Move Z")
@@ -101,11 +107,18 @@
 #define MSG_PID_D                           "PID-D"
 #define MSG_PID_C                           "PID-C"
 #define MSG_SELECT                          "\xbe\xdd\xc0\xb8"                                                 // "ｾﾝﾀｸ" ("Select")
+#define MSG_JERK                            "\xbc\xde\xb8\x20\xd4\xb8\xc4\xde mm/s"                            // ヤクド mm/s ("Jerk")
 #if LCD_WIDTH >= 20
   #define MSG_ACC                           "\xb6\xbf\xb8\xc4\xde mm/s2"                                       // "ｶｿｸﾄﾞ mm/s2" ("Accel")
-  #define MSG_VX_JERK                       "X\xbc\xde\xb8\x20\xd4\xb8\xc4\xde mm/s"                           // "Xｼﾞｸ ﾔｸﾄﾞ mm/s" ("Vx-jerk")
-  #define MSG_VY_JERK                       "Y\xbc\xde\xb8\x20\xd4\xb8\xc4\xde mm/s"                           // "Yｼﾞｸ ﾔｸﾄﾞ mm/s" ("Vy-jerk")
-  #define MSG_VZ_JERK                       "Z\xbc\xde\xb8\x20\xd4\xb8\xc4\xde mm/s"                           // "Zｼﾞｸ ﾔｸﾄﾞ mm/s" ("Vz-jerk")
+  #if IS_KINEMATIC
+    #define MSG_VA_JERK                     "A\xbc\xde\xb8\x20\xd4\xb8\xc4\xde mm/s"                           // "Aｼﾞｸ ﾔｸﾄﾞ mm/s" ("Va-jerk")
+    #define MSG_VB_JERK                     "B\xbc\xde\xb8\x20\xd4\xb8\xc4\xde mm/s"                           // "Bｼﾞｸ ﾔｸﾄﾞ mm/s" ("Vb-jerk")
+    #define MSG_VC_JERK                     "C\xbc\xde\xb8\x20\xd4\xb8\xc4\xde mm/s"                           // "Cｼﾞｸ ﾔｸﾄﾞ mm/s" ("Vc-jerk")
+  #else
+    #define MSG_VA_JERK                     "X\xbc\xde\xb8\x20\xd4\xb8\xc4\xde mm/s"                           // "Xｼﾞｸ ﾔｸﾄﾞ mm/s" ("Vx-jerk")
+    #define MSG_VB_JERK                     "Y\xbc\xde\xb8\x20\xd4\xb8\xc4\xde mm/s"                           // "Yｼﾞｸ ﾔｸﾄﾞ mm/s" ("Vy-jerk")
+    #define MSG_VC_JERK                     "Z\xbc\xde\xb8\x20\xd4\xb8\xc4\xde mm/s"                           // "Zｼﾞｸ ﾔｸﾄﾞ mm/s" ("Vz-jerk")
+  #endif
   #define MSG_VE_JERK                       "\xb4\xb8\xbd\xc4\xd9\xb0\xc0\xde\xb0\x20\xd4\xb8\xc4\xde"         // "ｴｸｽﾄﾙｰﾀﾞｰ ﾔｸﾄﾞ" ("Ve-jerk")
   #define MSG_VMAX                          "\xbb\xb2\xc0\xde\xb2\xb5\xb8\xd8\xbf\xb8\xc4\xde "                // "ｻｲﾀﾞｲｵｸﾘｿｸﾄﾞ " ("Vmax ")
   #define MSG_VMIN                          "\xbb\xb2\xbc\xae\xb3\xb5\xb8\xd8\xbf\xb8\xc4\xde"                 // "ｻｲｼｮｳｵｸﾘｿｸﾄﾞ" ("Vmin")
@@ -113,9 +126,15 @@
   #define MSG_AMAX                          "\xbb\xb2\xc0\xde\xb2\xb6\xbf\xb8\xc4\xde "                        // "ｻｲﾀﾞｲｶｿｸﾄﾞ " ("Amax ")
 #else
   #define MSG_ACC                           "\xb6\xbf\xb8\xc4\xde"                                             // "ｶｿｸﾄﾞ" ("Accel")
-  #define MSG_VX_JERK                       "X\xbc\xde\xb8\x20\xd4\xb8\xc4\xde"                                // "XYｼﾞｸ ﾔｸﾄﾞ" ("Vx-jerk")
-  #define MSG_VY_JERK                       "Y\xbc\xde\xb8\x20\xd4\xb8\xc4\xde"                                // "XYｼﾞｸ ﾔｸﾄﾞ" ("Vy-jerk")
-  #define MSG_VZ_JERK                       "Z\xbc\xde\xb8\x20\xd4\xb8\xc4\xde"                                // "Zｼﾞｸ ﾔｸﾄﾞ" ("Vz-jerk")
+  #if IS_KINEMATIC
+    #define MSG_VA_JERK                     "A\x20\xd4\xb8\xc4\xde"                                            // "Aｼﾞｸ ﾔｸﾄﾞ" ("Va-jerk")
+    #define MSG_VB_JERK                     "B\x20\xd4\xb8\xc4\xde"                                            // "Bｼﾞｸ ﾔｸﾄﾞ" ("Vb-jerk")
+    #define MSG_VC_JERK                     "C\x20\xd4\xb8\xc4\xde"                                            // "Cｼﾞｸ ﾔｸﾄﾞ" ("Vc-jerk")
+  #else
+    #define MSG_VA_JERK                     "X\x20\xd4\xb8\xc4\xde"                                            // "Xｼﾞｸ ﾔｸﾄﾞ" ("Vx-jerk")
+    #define MSG_VB_JERK                     "Y\x20\xd4\xb8\xc4\xde"                                            // "Yｼﾞｸ ﾔｸﾄﾞ" ("Vy-jerk")
+    #define MSG_VC_JERK                     "Z\x20\xd4\xb8\xc4\xde"                                            // "Zｼﾞｸ ﾔｸﾄﾞ" ("Vz-jerk")
+  #endif
   #define MSG_VE_JERK                       "E\x20\xd4\xb8\xc4\xde"                                            // "E ﾔｸﾄﾞ" ("Ve-jerk")
   #define MSG_VMAX                          "max\xb5\xb8\xd8\xbf\xb8\xc4\xde "                                 // "maxｵｸﾘｿｸﾄﾞ" ("Vmax ")
   #define MSG_VMIN                          "min\xb5\xb8\xd8\xbf\xb8\xc4\xde"                                  // "minｵｸﾘｿｸﾄﾞ" ("Vmin")
@@ -125,19 +144,43 @@
 #define MSG_A_RETRACT                       "\xcb\xb7\xba\xd0\xb6\xbf\xb8\xc4\xde"                             // "ﾋｷｺﾐｶｿｸﾄﾞ" ("A-retract")
 #define MSG_A_TRAVEL                        "\xb2\xc4\xde\xb3\xb6\xbf\xb8\xc4\xde"                             // "ｲﾄﾞｳｶｿｸﾄﾞ" ("A-travel")
 #if LCD_WIDTH >= 20
-  #define MSG_XSTEPS                          "Xsteps/mm"
-  #define MSG_YSTEPS                          "Ysteps/mm"
-  #define MSG_ZSTEPS                          "Zsteps/mm"
-  #define MSG_ESTEPS                          "Esteps/mm"
+  #define MSG_STEPS_PER_MM                  "Steps/mm"
+  #if IS_KINEMATIC
+    #define MSG_ASTEPS                      "Asteps/mm"
+    #define MSG_BSTEPS                      "Bsteps/mm"
+    #define MSG_CSTEPS                      "Csteps/mm"
+  #else
+    #define MSG_ASTEPS                      "Xsteps/mm"
+    #define MSG_BSTEPS                      "Ysteps/mm"
+    #define MSG_CSTEPS                      "Zsteps/mm"
+  #endif
+  #define MSG_ESTEPS                        "Esteps/mm"
+  #define MSG_E1STEPS                       "E1steps/mm"
+  #define MSG_E2STEPS                       "E2steps/mm"
+  #define MSG_E3STEPS                       "E3steps/mm"
+  #define MSG_E4STEPS                       "E4steps/mm"
+  #define MSG_E5STEPS                       "E5steps/mm"
 #else
-  #define MSG_XSTEPS                          "Xsteps"
-  #define MSG_YSTEPS                          "Ysteps"
-  #define MSG_ZSTEPS                          "Zsteps"
-  #define MSG_ESTEPS                          "Esteps"
+  #define MSG_STEPS_PER_MM                  "Steps"
+  #if IS_KINEMATIC
+    #define MSG_ASTEPS                      "Asteps"
+    #define MSG_BSTEPS                      "Bsteps"
+    #define MSG_CSTEPS                      "Csteps"
+  #else
+    #define MSG_ASTEPS                      "Xsteps"
+    #define MSG_BSTEPS                      "Ysteps"
+    #define MSG_CSTEPS                      "Zsteps"
+  #endif
+  #define MSG_ESTEPS                        "Esteps"
+  #define MSG_E1STEPS                       "E1steps"
+  #define MSG_E2STEPS                       "E2steps"
+  #define MSG_E3STEPS                       "E3steps"
+  #define MSG_E4STEPS                       "E4steps"
+  #define MSG_E5STEPS                       "E5steps"
 #endif
 #define MSG_TEMPERATURE                     "\xb5\xdd\xc4\xde"                                                 // "ｵﾝﾄﾞ" ("Temperature")
 #define MSG_MOTION                          "\xb3\xba\xde\xb7\xbe\xaf\xc3\xb2"                                 // "ｳｺﾞｷｾｯﾃｲ" ("Motion")
-#define MSG_VOLUMETRIC                      "\xcc\xa8\xd7\xd2\xdd\xc4"                                         // "ﾌｨﾗﾒﾝﾄ" ("Filament")
+#define MSG_FILAMENT                        "\xcc\xa8\xd7\xd2\xdd\xc4"                                         // "ﾌｨﾗﾒﾝﾄ" ("Filament")
 #define MSG_VOLUMETRIC_ENABLED              "E in mm3"
 #if LCD_WIDTH >= 20
   #define MSG_FILAMENT_DIAM                 "\xcc\xa8\xd7\xd2\xdd\xc4\xc1\xae\xaf\xb9\xb2"                     // "ﾌｨﾗﾒﾝﾄﾁｮｯｹｲ" ("Fil. Dia.")
@@ -145,8 +188,8 @@
   #define MSG_FILAMENT_DIAM                 "\xcc\xa8\xd7\xd2\xdd\xc4\xb9\xb2"                                 // "ﾌｨﾗﾒﾝﾄｹｲ" ("Fil. Dia.")
 #endif
 #define MSG_CONTRAST                        "LCD\xba\xdd\xc4\xd7\xbd\xc4"                                      // "LCDｺﾝﾄﾗｽﾄ" ("LCD contrast")
-#define MSG_STORE_EPROM                     "\xd2\xd3\xd8\xcd\xb6\xb8\xc9\xb3"                                 // "ﾒﾓﾘﾍｶｸﾉｳ" ("Store memory")
-#define MSG_LOAD_EPROM                      "\xd2\xd3\xd8\xb6\xd7\xd6\xd0\xba\xd0"                             // "ﾒﾓﾘｶﾗﾖﾐｺﾐ" ("Load memory")
+#define MSG_STORE_EEPROM                    "\xd2\xd3\xd8\xcd\xb6\xb8\xc9\xb3"                                 // "ﾒﾓﾘﾍｶｸﾉｳ" ("Store memory")
+#define MSG_LOAD_EEPROM                     "\xd2\xd3\xd8\xb6\xd7\xd6\xd0\xba\xd0"                             // "ﾒﾓﾘｶﾗﾖﾐｺﾐ" ("Load memory")
 #define MSG_RESTORE_FAILSAFE                "\xbe\xaf\xc3\xb2\xd8\xbe\xaf\xc4"                                 // "ｾｯﾃｲﾘｾｯﾄ" ("Restore failsafe")
 #define MSG_REFRESH                         "\xd8\xcc\xda\xaf\xbc\xad"                                         // "ﾘﾌﾚｯｼｭ" ("Refresh")
 #define MSG_WATCH                           "\xbc\xde\xae\xb3\xce\xb3\xb6\xde\xd2\xdd"                         // "ｼﾞｮｳﾎｳｶﾞﾒﾝ" ("Info screen")
@@ -159,7 +202,6 @@
 #define MSG_NO_CARD                         "SD\xb6\xb0\xc4\xde\xb6\xde\xb1\xd8\xcf\xbe\xdd"                   // "SDｶｰﾄﾞｶﾞｱﾘﾏｾﾝ" ("No SD card")
 #define MSG_DWELL                           "\xb7\xad\xb3\xbc"                                                 // "ｷｭｳｼ" ("Sleep...")
 #define MSG_USERWAIT                        "\xbc\xca\xde\xd7\xb8\xb5\xcf\xc1\xb8\xc0\xde\xbb\xb2"             // "ｼﾊﾞﾗｸｵﾏﾁｸﾀﾞｻｲ" ("Wait for user...")
-#define MSG_RESUMING                        "\xcc\xdf\xd8\xdd\xc4\xbb\xb2\xb6\xb2"                             // "ﾌﾟﾘﾝﾄｻｲｶｲ" ("Resuming print")
 #define MSG_PRINT_ABORTED                   "\xcc\xdf\xd8\xdd\xc4\xb6\xde\xc1\xad\xb3\xbc\xbb\xda\xcf\xbc\xc0" // "ﾌﾟﾘﾝﾄｶﾞﾁｭｳｼｻﾚﾏｼﾀ" ("Print aborted")
 #define MSG_NO_MOVE                         "\xb3\xba\xde\xb7\xcf\xbe\xdd"                                     // "ｳｺﾞｷﾏｾﾝ" ("No move.")
 #define MSG_KILLED                          "\xcb\xbc\xde\xae\xb3\xc3\xb2\xbc"                                 // "ﾋｼﾞｮｳﾃｲｼ" ("KILLED. ")
@@ -169,16 +211,16 @@
   #define MSG_CONTROL_RETRACT_SWAP          "\xcb\xb7\xba\xd0\xd8\xae\xb3S mm"                                 // "ﾋｷｺﾐﾘｮｳS mm" ("Swap Re.mm")
   #define MSG_CONTROL_RETRACTF              "\xcb\xb7\xba\xd0\xbf\xb8\xc4\xde mm/s"                            // "ﾋｷｺﾐｿｸﾄﾞ mm/s" ("Retract  V")
   #define MSG_CONTROL_RETRACT_ZLIFT         "\xc9\xbd\xde\xd9\xc0\xb2\xcb mm"                                  // "ﾉｽﾞﾙﾀｲﾋ mm" ("Hop mm")
-  #define MSG_CONTROL_RETRACT_RECOVER       "\xce\xbc\xae\xb3\xd8\xae\xb3 mm"                                  // "ﾎｼｮｳﾘｮｳ mm" ("UnRet +mm")
-  #define MSG_CONTROL_RETRACT_RECOVER_SWAP  "\xce\xbc\xae\xb3\xd8\xae\xb3S mm"                                 // "ﾎｼｮｳﾘｮｳS mm" ("S UnRet+mm")
+  #define MSG_CONTROL_RETRACT_RECOVER       "\xce\xbc\xae\xb3\xd8\xae\xb3 mm"                                  // "ﾎｼｮｳﾘｮｳ mm" ("UnRet mm")
+  #define MSG_CONTROL_RETRACT_RECOVER_SWAP  "\xce\xbc\xae\xb3\xd8\xae\xb3S mm"                                 // "ﾎｼｮｳﾘｮｳS mm" ("S UnRet mm")
   #define MSG_CONTROL_RETRACT_RECOVERF      "\xce\xbc\xae\xb3\xbf\xb8\xc4\xde mm/s"                            // "ﾎｼｮｳｿｸﾄﾞ mm/s" ("UnRet  V")
 #else
   #define MSG_CONTROL_RETRACT               "\xcb\xb7\xba\xd0\xd8\xae\xb3"                                     // "ﾋｷｺﾐﾘｮｳ" ("Retract mm")
   #define MSG_CONTROL_RETRACT_SWAP          "\xcb\xb7\xba\xd0\xd8\xae\xb3S"                                    // "ﾋｷｺﾐﾘｮｳS" ("Swap Re.mm")
   #define MSG_CONTROL_RETRACTF              "\xcb\xb7\xba\xd0\xbf\xb8\xc4\xde"                                 // "ﾋｷｺﾐｿｸﾄﾞ" ("Retract  V")
   #define MSG_CONTROL_RETRACT_ZLIFT         "\xc9\xbd\xde\xd9\xc0\xb2\xcb"                                     // "ﾉｽﾞﾙﾀｲﾋ" ("Hop mm")
-  #define MSG_CONTROL_RETRACT_RECOVER       "\xce\xbc\xae\xb3\xd8\xae\xb3"                                     // "ﾎｼｮｳﾘｮｳ" ("UnRet +mm")
-  #define MSG_CONTROL_RETRACT_RECOVER_SWAP  "\xce\xbc\xae\xb3\xd8\xae\xb3S"                                    // "ﾎｼｮｳﾘｮｳS" ("S UnRet+mm")
+  #define MSG_CONTROL_RETRACT_RECOVER       "\xce\xbc\xae\xb3\xd8\xae\xb3"                                     // "ﾎｼｮｳﾘｮｳ" ("UnRet mm")
+  #define MSG_CONTROL_RETRACT_RECOVER_SWAP  "\xce\xbc\xae\xb3\xd8\xae\xb3S"                                    // "ﾎｼｮｳﾘｮｳS" ("S UnRet mm")
   #define MSG_CONTROL_RETRACT_RECOVERF      "\xce\xbc\xae\xb3\xbf\xb8\xc4\xde"                                 // "ﾎｼｮｳｿｸﾄﾞ" ("UnRet  V")
 #endif
 #define MSG_AUTORETRACT                     "\xbc\xde\xc4\xde\xb3\xcb\xb7\xba\xd0"                             // "ｼﾞﾄﾞｳﾋｷｺﾐ" ("AutoRetr.")
@@ -230,9 +272,7 @@
 #define MSG_SHORT_HOUR                      "h"                                                                // One character only
 #define MSG_SHORT_MINUTE                    "m"                                                                // One character only
 #define MSG_HEATING                         "\xb6\xc8\xc2\xc1\xad\xb3"                                         // "ｶﾈﾂﾁｭｳ" ("Heating...")
-#define MSG_HEATING_COMPLETE                "\xb6\xc8\xc2\xb6\xdd\xd8\xae\xb3"                                 // "ｶﾈﾂｶﾝﾘｮｳ" ("Heating done.")
-#define MSG_BED_HEATING                     "\xcd\xde\xaf\xc4\xde\x20\xb6\xc8\xc2\xc1\xad\xb3"                 // "ﾍﾞｯﾄﾞ ｶﾈﾂﾁｭｳ" ("Bed Heating.")
-#define MSG_BED_DONE                        "\xcd\xde\xaf\xc4\xde\x20\xb6\xc8\xc2\xb6\xdd\xd8\xae\xb3"         // "ﾍﾞｯﾄﾞ ｶﾈﾂｶﾝﾘｮｳ" ("Bed done.")
+#define MSG_BED_HEATING                     "\xcd\xde\xaf\xc4\xde\x20\xb6\xc8\xc2\xc1\xad\xb3"                 // "ﾍﾞｯﾄﾞ ｶﾈﾂﾁｭｳ" ("Bed Heating...")
 #define MSG_DELTA_CALIBRATE                 "\xc3\xde\xd9\xc0\x20\xba\xb3\xbe\xb2"                             // "ﾃﾞﾙﾀ ｺｳｾｲ" ("Delta Calibration")
 #define MSG_DELTA_CALIBRATE_X               "X\xbc\xde\xb8\x20\xba\xb3\xbe\xb2"                                // "Xｼﾞｸ ｺｳｾｲ" ("Calibrate X")
 #define MSG_DELTA_CALIBRATE_Y               "Y\xbc\xde\xb8\x20\xba\xb3\xbe\xb2"                                // "Yｼﾞｸ ｺｳｾｲ" ("Calibrate Y")
@@ -246,8 +286,7 @@
 #define MSG_INFO_EXTRUDERS                  "\xb4\xb8\xbd\xc4\xd9\xb0\xc0\xde\xb0\xbd\xb3"                     // "ｴｸｽﾄﾙｰﾀﾞｰｽｳ" ("Extruders")
 #define MSG_INFO_BAUDRATE                   "\xce\xde\xb0\xda\xb0\xc4"                                         // "ﾎﾞｰﾚｰﾄ" ("Baud")
 #define MSG_INFO_PROTOCOL                   "\xcc\xdf\xdb\xc4\xba\xd9"                                         // "ﾌﾟﾛﾄｺﾙ" ("Protocol")
-#define MSG_LIGHTS_ON                       "\xb7\xae\xb3\xc0\xb2\xc5\xb2\xbc\xae\xb3\xd2\xb2\x20\xb5\xdd"     // "ｷｮｳﾀｲﾅｲｼｮｳﾒｲ ｵﾝ" ("Case light on")
-#define MSG_LIGHTS_OFF                      "\xb7\xae\xb3\xc0\xb2\xc5\xb2\xbc\xae\xb3\xd2\xb2\x20\xb5\xcc"     // "ｷｮｳﾀｲﾅｲｼｮｳﾒｲ ｵﾌ" ("Case light off")
+#define MSG_CASE_LIGHT                      "\xb7\xae\xb3\xc0\xb2\xc5\xb2\xbc\xae\xb3\xd2\xb2"                 // "ｷｮｳﾀｲﾅｲｼｮｳﾒｲ" ("Case light")
 #define MSG_INFO_PRINT_COUNT                "\xcc\xdf\xd8\xdd\xc4\xbd\xb3"                                     // "ﾌﾟﾘﾝﾄｽｳ" ("Print Count")
 #define MSG_INFO_COMPLETED_PRINTS           "\xb6\xdd\xd8\xae\xb3\xbd\xb3"                                     // "ｶﾝﾘｮｳｽｳ" ("Completed")
 #define MSG_INFO_PRINT_TIME                 "\xcc\xdf\xd8\xdd\xc4\xbc\xde\xb6\xdd\xd9\xb2\xb9\xb2"             // "ﾌﾟﾘﾝﾄｼﾞｶﾝﾙｲｹｲ" ("Total print time")
@@ -270,10 +309,7 @@
 #else
   #define MSG_DAC_PERCENT                   "DAC\xbc\xad\xc2\xd8\xae\xb8"                                      // "DACｼｭﾂﾘｮｸ" ("Driver %")
 #endif
-#define MSG_DAC_EEPROM_WRITE                MSG_STORE_EPROM                                                    // "ﾒﾓﾘﾍｶｸﾉｳ" ("DAC EEPROM Write")
-#define MSG_FILAMENT_CHANGE_HEADER          "\xcc\xa8\xd7\xd2\xdd\xc4\xba\xb3\xb6\xdd"                         // "ﾌｨﾗﾒﾝﾄｺｳｶﾝ" ("CHANGE FILAMENT")
-#define MSG_FILAMENT_CHANGE_OPTION_HEADER   "\xc4\xde\xb3\xbb\xa6\xbe\xdd\xc0\xb8\xbc\xc3\xb8\xc0\xde\xbb\xb2" // "ﾄﾞｳｻｦｾﾝﾀｸｼﾃｸﾀﾞｻｲ" ("CHANGE OPTIONS:")
-#define MSG_FILAMENT_CHANGE_OPTION_EXTRUDE  "\xbb\xd7\xc6\xb5\xbc\xc0\xde\xbd"                                 // "ｻﾗﾆｵｼﾀﾞｽ" ("Extrude more")
+#define MSG_DAC_EEPROM_WRITE                MSG_STORE_EEPROM                                                   // "ﾒﾓﾘﾍｶｸﾉｳ" ("DAC EEPROM Write")
 #define MSG_FILAMENT_CHANGE_OPTION_RESUME   "\xcc\xdf\xd8\xdd\xc4\xbb\xb2\xb6\xb2"                             // "ﾌﾟﾘﾝﾄｻｲｶｲ" ("Resume print")
 
 #if LCD_HEIGHT >= 4
@@ -286,8 +322,6 @@
   #define MSG_FILAMENT_CHANGE_INSERT_2      "\xb8\xd8\xaf\xb8\xbd\xd9\xc4\xbf\xde\xaf\xba\xb3\xbc\xcf\xbd"     // "ｸﾘｯｸｽﾙﾄｿﾞｯｺｳｼﾏｽ" ("and press button")
   #define MSG_FILAMENT_CHANGE_LOAD_1        "\xcc\xa8\xd7\xd2\xdd\xc4\xbf\xb3\xc3\xdd\xc1\xad\xb3"             // "ﾌｨﾗﾒﾝﾄｿｳﾃﾝﾁｭｳ" ("Wait for")
   #define MSG_FILAMENT_CHANGE_LOAD_2        "\xbc\xca\xde\xd7\xb8\xb5\xcf\xc1\xb8\xc0\xde\xbb\xb2"             // "ｼﾊﾞﾗｸｵﾏﾁｸﾀﾞｻｲ" ("filament load")
-  #define MSG_FILAMENT_CHANGE_EXTRUDE_1     "\xcc\xa8\xd7\xd2\xdd\xc4\xb5\xbc\xc0\xde\xbc\xc1\xad\xb3"         // "ﾌｨﾗﾒﾝﾄｵｼﾀﾞｼﾁｭｳ" ("Wait for")
-  #define MSG_FILAMENT_CHANGE_EXTRUDE_2     "\xbc\xca\xde\xd7\xb8\xb5\xcf\xc1\xb8\xc0\xde\xbb\xb2"             // "ｼﾊﾞﾗｸｵﾏﾁｸﾀﾞｻｲ" ("filament extrude")
   #define MSG_FILAMENT_CHANGE_RESUME_1      "\xcc\xdf\xd8\xdd\xc4\xa6\xbb\xb2\xb6\xb2\xbc\xcf\xbd"             // "ﾌﾟﾘﾝﾄｦｻｲｶｲｼﾏｽ" ("Wait for print")
   #define MSG_FILAMENT_CHANGE_RESUME_2      "\xbc\xca\xde\xd7\xb8\xb5\xcf\xc1\xb8\xc0\xde\xbb\xb2"             // "ｼﾊﾞﾗｸｵﾏﾁｸﾀﾞｻｲ" ("to resume")
 #else // LCD_HEIGHT < 4
@@ -300,7 +334,6 @@
     #define MSG_FILAMENT_CHANGE_INSERT_1    "\xbf\xb3\xc6\xad\xb3\xbc\x2c\xb8\xd8\xaf\xb8\xbe\xd6"                     // "ｿｳﾆｭｳｼ,ｸﾘｯｸｾﾖ" ("Insert and Click")
   #endif
   #define MSG_FILAMENT_CHANGE_LOAD_1        "\xcc\xa8\xd7\xd2\xdd\xc4\xbf\xb3\xc3\xdd\xc1\xad\xb3"             // "ﾌｨﾗﾒﾝﾄｿｳﾃﾝﾁｭｳ" ("Loading...")
-  #define MSG_FILAMENT_CHANGE_EXTRUDE_1     "\xcc\xa8\xd7\xd2\xdd\xc4\xb5\xbc\xc0\xde\xbc\xc1\xad\xb3"         // "ﾌｨﾗﾒﾝﾄｵｼﾀﾞｼﾁｭｳ" ("Extruding...")
   #define MSG_FILAMENT_CHANGE_RESUME_1      "\xcc\xdf\xd8\xdd\xc4\xa6\xbb\xb2\xb6\xb2\xbc\xcf\xbd"             // "ﾌﾟﾘﾝﾄｦｻｲｶｲｼﾏｽ" ("Resuming...")
 #endif // LCD_HEIGHT < 4
 

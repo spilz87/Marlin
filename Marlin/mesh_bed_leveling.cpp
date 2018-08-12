@@ -20,18 +20,41 @@
  *
  */
 
-#include "mesh_bed_leveling.h"
+#include "MarlinConfig.h"
 
 #if ENABLED(MESH_BED_LEVELING)
 
+  #include "mesh_bed_leveling.h"
+  #include "Marlin.h"
+  #include "serial.h"
+
   mesh_bed_leveling mbl;
 
-  mesh_bed_leveling::mesh_bed_leveling() { reset(); }
+  float mesh_bed_leveling::z_offset,
+        mesh_bed_leveling::z_values[GRID_MAX_POINTS_X][GRID_MAX_POINTS_Y],
+        mesh_bed_leveling::index_to_xpos[GRID_MAX_POINTS_X],
+        mesh_bed_leveling::index_to_ypos[GRID_MAX_POINTS_Y];
+
+  mesh_bed_leveling::mesh_bed_leveling() {
+    for (uint8_t i = 0; i < GRID_MAX_POINTS_X; ++i)
+      index_to_xpos[i] = MESH_MIN_X + i * (MESH_X_DIST);
+    for (uint8_t i = 0; i < GRID_MAX_POINTS_Y; ++i)
+      index_to_ypos[i] = MESH_MIN_Y + i * (MESH_Y_DIST);
+    reset();
+  }
 
   void mesh_bed_leveling::reset() {
-    status = MBL_STATUS_NONE;
     z_offset = 0;
     ZERO(z_values);
   }
 
-#endif  // MESH_BED_LEVELING
+  void mesh_bed_leveling::report_mesh() {
+    SERIAL_PROTOCOLLNPGM("Num X,Y: " STRINGIFY(GRID_MAX_POINTS_X) "," STRINGIFY(GRID_MAX_POINTS_Y));
+    SERIAL_PROTOCOLPGM("Z offset: "); SERIAL_PROTOCOL_F(z_offset, 5);
+    SERIAL_PROTOCOLLNPGM("\nMeasured points:");
+    print_2d_array(GRID_MAX_POINTS_X, GRID_MAX_POINTS_Y, 5,
+      [](const uint8_t ix, const uint8_t iy) { return z_values[ix][iy]; }
+    );
+  }
+
+#endif // MESH_BED_LEVELING
