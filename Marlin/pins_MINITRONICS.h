@@ -24,17 +24,22 @@
  * Minitronics v1.0/1.1 pin assignments
  */
 
+/**
+ * Rev B   2 JAN 2017
+ *
+ *  Added pin definitions for M3, M4 & M5 spindle control commands
+ *
+ */
+
 #ifndef __AVR_ATmega1281__
   #error "Oops!  Make sure you have 'Minitronics' selected from the 'Tools -> Boards' menu."
 #endif
 
-#if HOTENDS > 2
-  #error "Minitronics supports up to 2 hotends. Comment this line to keep going."
+#if HOTENDS > 2 || E_STEPPERS > 2
+  #error "Minitronics supports up to 2 hotends / E-steppers. Comment out this line to continue."
 #endif
 
 #define BOARD_NAME         "Minitronics v1.0 / v1.1"
-#define LARGE_FLASH        true
-
 //
 // Limit Switches
 //
@@ -52,13 +57,13 @@
 #define X_DIR_PIN          47
 #define X_ENABLE_PIN       49
 
-#define Y_STEP_PIN         39 // A6
-#define Y_DIR_PIN          40 // A0
+#define Y_STEP_PIN         39   // A6
+#define Y_DIR_PIN          40   // A0
 #define Y_ENABLE_PIN       38
 
-#define Z_STEP_PIN         42 // A2
-#define Z_DIR_PIN          43 // A6
-#define Z_ENABLE_PIN       41 // A1
+#define Z_STEP_PIN         42   // A2
+#define Z_DIR_PIN          43   // A6
+#define Z_ENABLE_PIN       41   // A1
 
 #define E0_STEP_PIN        45
 #define E0_DIR_PIN         44
@@ -78,11 +83,13 @@
 //
 // Heaters / Fans
 //
-#define HEATER_0_PIN        7 // EXTRUDER 1
-#define HEATER_1_PIN        8 // EXTRUDER 2
-#define HEATER_BED_PIN      3 // BED
+#define HEATER_0_PIN        7   // EXTRUDER 1
+#define HEATER_1_PIN        8   // EXTRUDER 2
+#define HEATER_BED_PIN      3   // BED
 
-#define FAN_PIN             9
+#ifndef FAN_PIN
+  #define FAN_PIN           9
+#endif
 
 //
 // Misc. Functions
@@ -97,9 +104,9 @@
 
 #if ENABLED(REPRAPWORLD_GRAPHICAL_LCD)
 
-  #define LCD_PINS_RS      15 // CS chip select /SS chip slave select
-  #define LCD_PINS_ENABLE  11 // SID (MOSI)
-  #define LCD_PINS_D4      10 // SCK (CLK) clock
+  #define LCD_PINS_RS      15   // CS chip select /SS chip slave select
+  #define LCD_PINS_ENABLE  11   // SID (MOSI)
+  #define LCD_PINS_D4      10   // SCK (CLK) clock
 
   #define BTN_EN1          18
   #define BTN_EN2          17
@@ -111,15 +118,27 @@
 
   #define LCD_PINS_RS      -1
   #define LCD_PINS_ENABLE  -1
-  #define LCD_PINS_D4      -1
-  #define LCD_PINS_D5      -1
-  #define LCD_PINS_D6      -1
-  #define LCD_PINS_D7      -1
 
   // Buttons are directly attached using keypad
   #define BTN_EN1          -1
   #define BTN_EN2          -1
   #define BTN_ENC          -1
 
-  #define SD_DETECT_PIN    -1 // Minitronics doesn't use this
+  #define SD_DETECT_PIN    -1   // Minitronics doesn't use this
+#endif
+
+//
+// M3/M4/M5 - Spindle/Laser Control
+//
+#if ENABLED(SPINDLE_LASER_ENABLE)  // assumes we're only doing CNC work (no 3D printing)
+  #undef HEATER_BED_PIN
+  #undef TEMP_BED_PIN             // need to free up some pins but also need to
+  #undef TEMP_0_PIN               // re-assign them (to unused pins) because Marlin
+  #undef TEMP_1_PIN               // requires the presence of certain pins or else it
+  #define HEATER_BED_PIN      4   // won't compile
+  #define TEMP_BED_PIN       50
+  #define TEMP_0_PIN         51
+  #define SPINDLE_LASER_ENABLE_PIN      52   // using A6 because it already has a pullup
+  #define SPINDLE_LASER_PWM_PIN          3   // WARNING - LED & resistor pull up to +12/+24V stepper voltage
+  #define SPINDLE_DIR_PIN               53
 #endif

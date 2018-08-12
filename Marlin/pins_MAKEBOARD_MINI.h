@@ -20,9 +20,20 @@
  *
  */
 
-/**
- * Melzi with ATmega1284 (MaKr3d version) pin assignments
- */
+#include "pins_RAMPS.h"
 
-#define BOARD_NAME "Melzi (ATmega1284)"
-#include "pins_MELZI.h"
+#undef BOARD_NAME
+#define BOARD_NAME "MAKEBOARD_MINI"
+
+//
+// Only 3 Limit Switch plugs on Micromake C1
+//
+#undef X_MIN_PIN
+#undef Y_MIN_PIN
+#undef Z_MIN_PIN
+#undef X_MAX_PIN
+#undef Y_MAX_PIN
+#undef Z_MAX_PIN
+#define X_STOP_PIN          2
+#define Y_STOP_PIN         15
+#define Z_STOP_PIN         19

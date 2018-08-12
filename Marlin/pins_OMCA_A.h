@@ -50,8 +50,33 @@
  *
  */
 
+/**
+ * Rev B    26 DEC 2016
+ *
+ * added pointer to a current Arduino IDE extension
+ *
+ */
+
+/**
+ * A useable Arduino IDE extension (board manager) can be found at
+ * https://github.com/Lauszus/Sanguino
+ *
+ * This extension has been tested on Arduino 1.6.12 & 1.8.0
+ *
+ * Here's the JSON path:
+ * https://raw.githubusercontent.com/Lauszus/Sanguino/master/package_lauszus_sanguino_index.json
+ *
+ * When installing select 1.0.2
+ *
+ * Installation instructions can be found at https://learn.sparkfun.com/pages/CustomBoardsArduino
+ * Just use the above JSON URL instead of Sparkfun's JSON.
+ *
+ * Once installed select the Sanguino board and then select the CPU.
+ *
+ */
+
 #ifndef __AVR_ATmega644__
-  #error "Oops!  Make sure you have 'SanguinoA' selected from the 'Tools -> Boards' menu."
+  #error "Oops!  Make sure you have 'Sanguino' selected from the 'Tools -> Boards' menu."
 #endif
 
 #define BOARD_NAME         "Alpha OMCA"
@@ -82,12 +107,12 @@
 #define E0_DIR_PIN         27
 #define E0_ENABLE_PIN      24
 
-#define E1_STEP_PIN        -1 // 19
-#define E1_DIR_PIN         -1 // 18
+#define E1_STEP_PIN        -1   // 19
+#define E1_DIR_PIN         -1   // 18
 #define E1_ENABLE_PIN      24
 
-#define E2_STEP_PIN        -1 // 17
-#define E2_DIR_PIN         -1 // 16
+#define E2_STEP_PIN        -1   // 17
+#define E2_DIR_PIN         -1   // 16
 #define E2_ENABLE_PIN      24
 
 //
@@ -100,7 +125,9 @@
 //
 #define HEATER_0_PIN        4
 
-#define FAN_PIN             3
+#ifndef FAN_PIN
+  #define FAN_PIN           3
+#endif
 
 //
 // Misc. Functions

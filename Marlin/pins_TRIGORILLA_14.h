@@ -21,8 +21,16 @@
  */
 
 /**
- * Melzi with ATmega1284 (MaKr3d version) pin assignments
+ * Arduino Mega with RAMPS v1.4 for Anycubic
  */
 
-#define BOARD_NAME "Melzi (ATmega1284)"
-#include "pins_MELZI.h"
+#ifndef BOARD_NAME
+  #define BOARD_NAME "Anycubic RAMPS 1.4"
+#endif
+
+#define IS_RAMPS_EFB
+
+#define FAN2_PIN             44
+#define ORIG_E0_AUTO_FAN_PIN 44
+
+#include "pins_RAMPS.h"

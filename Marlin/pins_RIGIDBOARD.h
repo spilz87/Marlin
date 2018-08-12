@@ -33,6 +33,12 @@
   #define Z_MIN_PROBE_PIN  19    // Z-MAX pin J14 End Stops
 #endif
 
+//
+// MOSFET changes
+//
+#define RAMPS_D10_PIN       9   // EXTRUDER 1
+#define MOSFET_D_PIN       12   // EXTRUDER 2 or FAN
+
 #include "pins_RAMPS.h"
 
 //
@@ -68,27 +74,25 @@
 // SPI for Max6675 or Max31855 Thermocouple
 #undef MAX6675_SS
 #if DISABLED(SDSUPPORT)
-  #define MAX6675_SS       53 // Don't use pin 53 if there is even the remote possibility of using Display/SD card
+  #define MAX6675_SS       53   // Don't use pin 53 if there is even the remote possibility of using Display/SD card
 #else
-  #define MAX6675_SS       49 // Don't use pin 49 as this is tied to the switch inside the SD card socket to detect if there is an SD card present
+  #define MAX6675_SS       49   // Don't use pin 49 as this is tied to the switch inside the SD card socket to detect if there is an SD card present
 #endif
 
 //
 // Heaters / Fans
 //
-#define RAMPS_D10_PIN       9 // EXTRUDER 1
-#define MOSFET_D_PIN       12 // EXTRUDER 2 or FAN
-
-#undef  HEATER_BED_PIN
+#undef HEATER_BED_PIN
 #define HEATER_BED_PIN     10
 
-#undef  FAN_PIN
-#define FAN_PIN             8 // Same as RAMPS_13_EEF
+#ifndef FAN_PIN
+  #define FAN_PIN           8   // Same as RAMPS_13_EEF
+#endif
 
 //
 // Misc. Functions
 //
-#undef  PS_ON_PIN
+#undef PS_ON_PIN
 #define PS_ON_PIN          -1
 
 //
@@ -107,27 +111,24 @@
   #define BTN_RT           32
 
   // 'R' button
-  #undef  BTN_ENC
+  #undef BTN_ENC
   #define BTN_ENC 31
 
   // Disable encoder
-  #undef  BTN_EN1
+  #undef BTN_EN1
   #define BTN_EN1 -1
-  #undef  BTN_EN2
+  #undef BTN_EN2
   #define BTN_EN2 -1
 
-  #undef  SD_DETECT_PIN
+  #undef SD_DETECT_PIN
   #define SD_DETECT_PIN 22
 
 #elif ENABLED(REPRAP_DISCOUNT_SMART_CONTROLLER)
 
-  #undef BEEPER_PIN
-  #define BEEPER_PIN -1
-
-  #undef  SD_DETECT_PIN
+  #undef SD_DETECT_PIN
   #define SD_DETECT_PIN 22
 
-  #undef  KILL_PIN
+  #undef KILL_PIN
   #define KILL_PIN 32
 
 #endif

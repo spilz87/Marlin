@@ -51,6 +51,31 @@
  * REF http://sanguino.cc/hardware
  */
 
+/**
+ * Rev B    26 DEC 2016
+ *
+ * added pointer to a current Arduino IDE extension
+ *
+ */
+
+/**
+ * A useable Arduino IDE extension (board manager) can be found at
+ * https://github.com/Lauszus/Sanguino
+ *
+ * This extension has been tested on Arduino 1.6.12 & 1.8.0
+ *
+ * Here's the JSON path:
+ * https://raw.githubusercontent.com/Lauszus/Sanguino/master/package_lauszus_sanguino_index.json
+ *
+ * When installing select 1.0.2
+ *
+ * Installation instructions can be found at https://learn.sparkfun.com/pages/CustomBoardsArduino
+ * Just use the above JSON URL instead of Sparkfun's JSON.
+ *
+ * Once installed select the Sanguino board and then select the CPU.
+ *
+ */
+
 #if !defined(__AVR_ATmega644P__) && !defined(__AVR_ATmega644__)
   #error "Oops!  Make sure you have 'Sanguino' selected from the 'Tools -> Boards' menu. (Final OMCA board)"
 #endif
@@ -83,13 +108,13 @@
 #define E0_DIR_PIN         21
 #define E0_ENABLE_PIN      10
 
-#define E1_STEP_PIN        -1 // 21
-#define E1_DIR_PIN         -1 // 20
-#define E1_ENABLE_PIN      -1 // 19
+#define E1_STEP_PIN        -1   // 21
+#define E1_DIR_PIN         -1   // 20
+#define E1_ENABLE_PIN      -1   // 19
 
-#define E2_STEP_PIN        -1 // 21
-#define E2_DIR_PIN         -1 // 20
-#define E2_ENABLE_PIN      -1 // 18
+#define E2_STEP_PIN        -1   // 21
+#define E2_DIR_PIN         -1   // 20
+#define E2_ENABLE_PIN      -1   // 18
 
 //
 // Temperature Sensors
@@ -101,18 +126,20 @@
 //
 // Heaters / Fans
 //
-#define HEATER_0_PIN        3 // DONE PWM on RIGHT connector
+#define HEATER_0_PIN        3   // DONE PWM on RIGHT connector
 #define HEATER_BED_PIN      4
 
-#define FAN_PIN            14 // PWM on MIDDLE connector
+#ifndef FAN_PIN
+  #define FAN_PIN          14   // PWM on MIDDLE connector
+#endif
 
 //
 // Misc. Functions
 //
 #define SDSS               11
 
-#define I2C_SCL            16
-#define I2C_SDA            17
+#define I2C_SCL_PIN        16
+#define I2C_SDA_PIN        17
 
 // future proofing
 #define __FS  20
@@ -120,4 +147,4 @@
 #define __GS  18
 #define __GD  13
 
-#define UNUSED_PWM         14 // PWM on LEFT connector
+#define UNUSED_PWM         14   // PWM on LEFT connector

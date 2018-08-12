@@ -21,8 +21,41 @@
  */
 
 /**
- * Melzi with ATmega1284 (MaKr3d version) pin assignments
+ * runout.cpp - Runout sensor support
  */
 
-#define BOARD_NAME "Melzi (ATmega1284)"
-#include "pins_MELZI.h"
+#include "MarlinConfig.h"
+
+#if ENABLED(FILAMENT_RUNOUT_SENSOR)
+
+#include "runout.h"
+
+FilamentRunoutSensor runout;
+
+bool FilamentRunoutSensor::filament_ran_out; // = false
+uint8_t FilamentRunoutSensor::runout_count; // = 0
+
+void FilamentRunoutSensor::setup() {
+
+  #if ENABLED(FIL_RUNOUT_PULLUP)
+    #define INIT_RUNOUT_PIN(P) SET_INPUT_PULLUP(P)
+  #else
+    #define INIT_RUNOUT_PIN(P) SET_INPUT(P)
+  #endif
+
+  INIT_RUNOUT_PIN(FIL_RUNOUT_PIN);
+  #if NUM_RUNOUT_SENSORS > 1
+    INIT_RUNOUT_PIN(FIL_RUNOUT2_PIN);
+    #if NUM_RUNOUT_SENSORS > 2
+      INIT_RUNOUT_PIN(FIL_RUNOUT3_PIN);
+      #if NUM_RUNOUT_SENSORS > 3
+        INIT_RUNOUT_PIN(FIL_RUNOUT4_PIN);
+        #if NUM_RUNOUT_SENSORS > 4
+          INIT_RUNOUT_PIN(FIL_RUNOUT5_PIN);
+        #endif
+      #endif
+    #endif
+  #endif
+}
+
+#endif // FILAMENT_RUNOUT_SENSOR

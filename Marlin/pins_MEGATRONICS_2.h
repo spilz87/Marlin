@@ -29,8 +29,6 @@
 #endif
 
 #define BOARD_NAME         "Megatronics v2.0"
-#define LARGE_FLASH        true
-
 //
 // Limit Switches
 //
@@ -55,13 +53,13 @@
 #define X_DIR_PIN          27
 #define X_ENABLE_PIN       25
 
-#define Y_STEP_PIN          4 // A6
-#define Y_DIR_PIN          54 // A0
+#define Y_STEP_PIN          4   // A6
+#define Y_DIR_PIN          54   // A0
 #define Y_ENABLE_PIN        5
 
-#define Z_STEP_PIN         56 // A2
-#define Z_DIR_PIN          60 // A6
-#define Z_ENABLE_PIN       55 // A1
+#define Z_STEP_PIN         56   // A2
+#define Z_DIR_PIN          60   // A6
+#define Z_ENABLE_PIN       55   // A1
 
 #define E0_STEP_PIN        35
 #define E0_DIR_PIN         36
@@ -71,8 +69,8 @@
 #define E1_DIR_PIN         39
 #define E1_ENABLE_PIN      28
 
-#define E2_STEP_PIN        23
-#define E2_DIR_PIN         24
+#define E2_STEP_PIN        23   // ? schematic says 24
+#define E2_DIR_PIN         24   // ? schematic says 23
 #define E2_ENABLE_PIN      22
 
 //
@@ -103,7 +101,9 @@
 #define HEATER_1_PIN        8
 #define HEATER_BED_PIN     10
 
-#define FAN_PIN             7
+#ifndef FAN_PIN
+  #define FAN_PIN           7
+#endif
 #define FAN1_PIN            6
 
 //
@@ -112,6 +112,7 @@
 #define SDSS               53
 #define LED_PIN            13
 #define PS_ON_PIN          12
+#define CASE_LIGHT_PIN      2
 
 //
 // LCD / Controller
@@ -129,3 +130,16 @@
 #define BTN_EN1            61
 #define BTN_EN2            59
 #define BTN_ENC            43
+
+// Buttons that are attached using shift register of reprapworld keypad  v1.1
+#define SHIFT_CLK 63
+#define SHIFT_LD 42
+#define SHIFT_OUT 17
+#define SHIFT_EN 17
+
+//
+// M3/M4/M5 - Spindle/Laser Control
+//
+#define SPINDLE_LASER_PWM_PIN     3   // MUST BE HARDWARE PWM
+#define SPINDLE_LASER_ENABLE_PIN 16   // Pin should have a pullup!
+#define SPINDLE_DIR_PIN          11

@@ -21,8 +21,24 @@
  */
 
 /**
- * Melzi with ATmega1284 (MaKr3d version) pin assignments
+ * power.h - power control
  */
 
-#define BOARD_NAME "Melzi (ATmega1284)"
-#include "pins_MELZI.h"
+#ifndef POWER_H
+#define POWER_H
+
+#include "types.h"
+
+class Power {
+  public:
+    static void check();
+    static void power_on();
+    static void power_off();
+  private:
+    static millis_t lastPowerOn;
+    static bool is_power_needed();
+};
+
+extern Power powerManager;
+
+#endif // POWER_H
