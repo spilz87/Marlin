@@ -21,15 +21,20 @@
  */
 
 /**
- * blinkm.h - Control a BlinkM over i2c
+ * emergency_parser.cpp - Intercept special commands directly in the serial stream
  */
 
-#ifndef _BLINKM_H_
-#define _BLINKM_H_
+#include "MarlinConfig.h"
 
-struct LEDColor;
-typedef LEDColor LEDColor;
+#if ENABLED(EMERGENCY_PARSER)
 
-void blinkm_set_led_color(const LEDColor &color);
+#include "emergency_parser.h"
 
-#endif // _BLINKM_H_
+// Static data members
+bool EmergencyParser::killed_by_M112; // = false
+EmergencyParser::State EmergencyParser::state; // = EP_RESET
+
+// Global instance
+EmergencyParser emergency_parser;
+
+#endif // EMERGENCY_PARSER

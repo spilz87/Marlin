@@ -30,10 +30,12 @@
  * http://arduino.cc/forum/index.php/topic,51842.0.html
  */
 
-#include "dac_mcp4728.h"
-#include "enum.h"
+#include "MarlinConfig.h"
 
 #if ENABLED(DAC_STEPPER_CURRENT)
+
+#include "dac_mcp4728.h"
+#include "enum.h"
 
 uint16_t mcp4728_values[XYZE];
 
@@ -114,13 +116,13 @@ uint16_t mcp4728_getVout(uint8_t channel) {
 /**
  * Returns DAC values as a 0-100 percentage of drive strength
  */
-uint16_t mcp4728_getDrvPct(uint8_t channel) { return uint16_t(100.0 * mcp4728_values[channel] / (DAC_STEPPER_MAX) + 0.5); }
+uint8_t mcp4728_getDrvPct(uint8_t channel) { return uint8_t(100.0 * mcp4728_values[channel] / (DAC_STEPPER_MAX) + 0.5); }
 
 /**
  * Receives all Drive strengths as 0-100 percent values, updates
  * DAC Values array and calls fastwrite to update the DAC.
  */
-void mcp4728_setDrvPct(uint16_t pct[XYZE]) {
+void mcp4728_setDrvPct(uint8_t pct[XYZE]) {
   LOOP_XYZE(i) mcp4728_values[i] = 0.01 * pct[i] * (DAC_STEPPER_MAX);
   mcp4728_fastWrite();
 }
