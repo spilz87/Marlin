@@ -33,25 +33,25 @@
  * License: http://opensource.org/licenses/BSD-3-Clause
  */
 
+/**
+ * Implementation of the LCD display routines for a DOGM128 graphic display.
+ * These are common LCD 128x64 pixel graphic displays.
+ */
+
 #ifndef ULTRALCD_IMPL_DOGM_H
 #define ULTRALCD_IMPL_DOGM_H
 
 #include "MarlinConfig.h"
 
-/**
- * Implementation of the LCD display routines for a DOGM128 graphic display.
- * These are common LCD 128x64 pixel graphic displays.
- */
+#include <U8glib.h>
+
 #include "ultralcd.h"
-#include "ultralcd_st7920_u8glib_rrd.h"
 #include "dogm_bitmaps.h"
 #include "utility.h"
 #include "duration_t.h"
 
-#include <U8glib.h>
-
-#if ENABLED(SHOW_BOOTSCREEN) && ENABLED(SHOW_CUSTOM_BOOTSCREEN)
-  #include "_Bootscreen.h"
+#if ENABLED(AUTO_BED_LEVELING_UBL)
+  #include "ubl.h"
 #endif
 
 // Only Western languages support big / small fonts
@@ -60,11 +60,21 @@
   #undef USE_SMALL_INFOFONT
 #endif
 
+#if ENABLED(U8GLIB_ST7920)
+  #include "ultralcd_st7920_u8glib_rrd.h"
+#endif
+
+#if ENABLED(U8GLIB_ST7565_64128N)
+  #include "ultralcd_st7565_u8glib_VIKI.h"
+#endif
+
 #if ENABLED(USE_SMALL_INFOFONT)
   #include "dogm_font_data_6x9_marlin.h"
   #define FONT_STATUSMENU_NAME u8g_font_6x9
+  #define INFO_FONT_HEIGHT 7
 #else
   #define FONT_STATUSMENU_NAME FONT_MENU_NAME
+  #define INFO_FONT_HEIGHT 8
 #endif
 
 #include "dogm_font_data_Marlin_symbols.h"   // The Marlin special symbols
@@ -74,6 +84,9 @@
   #if ENABLED(DISPLAY_CHARSET_ISO10646_1)
     #include "dogm_font_data_ISO10646_1.h"
     #define FONT_MENU_NAME ISO10646_1_5x7
+  #elif ENABLED(DISPLAY_CHARSET_ISO10646_PL)
+    #include "dogm_font_data_ISO10646_1_PL.h"
+    #define FONT_MENU_NAME ISO10646_1_PL_5x7
   #elif ENABLED(DISPLAY_CHARSET_ISO10646_5)
     #include "dogm_font_data_ISO10646_5_Cyrillic.h"
     #define FONT_MENU_NAME ISO10646_5_Cyrillic_5x7
@@ -90,6 +103,12 @@
   #elif ENABLED(DISPLAY_CHARSET_ISO10646_TR)
     #include "dogm_font_data_ISO10646_1_tr.h"
     #define FONT_MENU_NAME ISO10646_TR
+  #elif ENABLED(DISPLAY_CHARSET_ISO10646_CZ)
+    #include "dogm_font_data_ISO10646_CZ.h"
+    #define FONT_MENU_NAME ISO10646_CZ
+  #elif ENABLED(DISPLAY_CHARSET_ISO10646_SK)
+    #include "dogm_font_data_ISO10646_SK.h"
+    #define FONT_MENU_NAME ISO10646_SK
   #else // fall-back
     #include "dogm_font_data_ISO10646_1.h"
     #define FONT_MENU_NAME ISO10646_1_5x7
@@ -123,13 +142,11 @@
 #if ENABLED(USE_BIG_EDIT_FONT)
   #define FONT_MENU_EDIT_NAME u8g_font_9x18
   #define DOG_CHAR_WIDTH_EDIT  9
-  #define DOG_CHAR_HEIGHT_EDIT 13
-  #define LCD_WIDTH_EDIT       14
+  #define DOG_CHAR_HEIGHT_EDIT 18
 #else
   #define FONT_MENU_EDIT_NAME FONT_MENU_NAME
-  #define DOG_CHAR_WIDTH_EDIT  6
-  #define DOG_CHAR_HEIGHT_EDIT 12
-  #define LCD_WIDTH_EDIT       22
+  #define DOG_CHAR_WIDTH_EDIT  DOG_CHAR_WIDTH
+  #define DOG_CHAR_HEIGHT_EDIT DOG_CHAR_HEIGHT
 #endif
 
 #ifndef TALL_FONT_CORRECTION
@@ -161,18 +178,30 @@
   // Based on the Adafruit ST7565 (http://www.adafruit.com/products/250)
   //U8GLIB_LM6059 u8g(DOGLCD_CS, DOGLCD_A0);  // 8 stripes
   U8GLIB_LM6059_2X u8g(DOGLCD_CS, DOGLCD_A0); // 4 stripes
-#elif ENABLED(MAKRPANEL) || ENABLED(VIKI2) || ENABLED(miniVIKI)
+#elif ENABLED(U8GLIB_ST7565_64128N)
   // The MaKrPanel, Mini Viki, and Viki 2.0, ST7565 controller as well
-  //U8GLIB_NHD_C12864 u8g(DOGLCD_CS, DOGLCD_A0);  // 8 stripes
-  U8GLIB_NHD_C12864_2X u8g(DOGLCD_CS, DOGLCD_A0); // 4 stripes
+  // U8GLIB_ST7565_64128n_2x_VIKI u8g(0);  // using SW-SPI DOGLCD_MOSI != -1 && DOGLCD_SCK
+  U8GLIB_ST7565_64128n_2x_VIKI u8g(DOGLCD_SCK, DOGLCD_MOSI, DOGLCD_CS, DOGLCD_A0);  // using SW-SPI
+  //U8GLIB_NHD_C12864_2X u8g(DOGLCD_CS, DOGLCD_A0); // 4 stripes  HWSPI
+#elif ENABLED(MKS_12864OLED_SSD1306)
+  // MKS 128x64 (SSD1306) OLED I2C LCD
+  U8GLIB_SSD1306_128X64 u8g(DOGLCD_SCK, DOGLCD_MOSI, DOGLCD_CS, DOGLCD_A0);      // 8 stripes
+  //U8GLIB_SSD1306_128X64_2X u8g(DOGLCD_SCK, DOGLCD_MOSI, DOGLCD_CS, DOGLCD_A0); // 4 stripes
 #elif ENABLED(U8GLIB_SSD1306)
   // Generic support for SSD1306 OLED I2C LCDs
   //U8GLIB_SSD1306_128X64 u8g(U8G_I2C_OPT_NONE | U8G_I2C_OPT_FAST);  // 8 stripes
   U8GLIB_SSD1306_128X64_2X u8g(U8G_I2C_OPT_NONE | U8G_I2C_OPT_FAST); // 4 stripes
+#elif ENABLED(MKS_12864OLED)
+  // MKS 128x64 (SH1106) OLED I2C LCD
+  U8GLIB_SH1106_128X64 u8g(DOGLCD_SCK, DOGLCD_MOSI, DOGLCD_CS, DOGLCD_A0);      // 8 stripes
+  //U8GLIB_SH1106_128X64_2X u8g(DOGLCD_SCK, DOGLCD_MOSI, DOGLCD_CS, DOGLCD_A0); // 4 stripes
 #elif ENABLED(U8GLIB_SH1106)
   // Generic support for SH1106 OLED I2C LCDs
   //U8GLIB_SH1106_128X64 u8g(U8G_I2C_OPT_NONE | U8G_I2C_OPT_FAST);  // 8 stripes
   U8GLIB_SH1106_128X64_2X u8g(U8G_I2C_OPT_NONE | U8G_I2C_OPT_FAST); // 4 stripes
+#elif ENABLED(U8GLIB_SSD1309)
+  // Generic support for SSD1309 OLED I2C LCDs
+  U8GLIB_SSD1309_128X64 u8g(U8G_I2C_OPT_NONE | U8G_I2C_OPT_FAST);
 #elif ENABLED(MINIPANEL)
   // The MINIPanel display
   //U8GLIB_MINI12864 u8g(DOGLCD_CS, DOGLCD_A0);  // 8 stripes
@@ -192,7 +221,7 @@
 
 #include "utf_mapper.h"
 
-int lcd_contrast;
+int16_t lcd_contrast; // Initialized by settings.load()
 static char currentfont = 0;
 
 // The current graphical page being rendered
@@ -213,7 +242,7 @@ static void lcd_setFont(const char font_nr) {
 }
 
 void lcd_print(const char c) {
-  if ((c > 0) && (c <= LCD_STR_SPECIAL_MAX)) {
+  if (WITHIN(c, 1, LCD_STR_SPECIAL_MAX)) {
     u8g.setFont(FONT_SPECIAL_NAME);
     u8g.print(c);
     lcd_setFont(currentfont);
@@ -222,7 +251,7 @@ void lcd_print(const char c) {
 }
 
 char lcd_print_and_count(const char c) {
-  if ((c > 0) && (c <= LCD_STR_SPECIAL_MAX)) {
+  if (WITHIN(c, 1, LCD_STR_SPECIAL_MAX)) {
     u8g.setFont(FONT_SPECIAL_NAME);
     u8g.print(c);
     lcd_setFont(currentfont);
@@ -231,24 +260,115 @@ char lcd_print_and_count(const char c) {
   else return charset_mapper(c);
 }
 
-void lcd_print(const char* const str) {
-  for (uint8_t i = 0; char c = str[i]; ++i) lcd_print(c);
+/**
+ * Core LCD printing functions
+ * On DOGM all strings go through a filter for utf
+ * But only use lcd_print_utf and lcd_printPGM_utf for translated text
+ */
+void lcd_print(const char *str) { while (*str) lcd_print(*str++); }
+void lcd_printPGM(const char *str) { while (const char c = pgm_read_byte(str)) lcd_print(c), ++str; }
+
+void lcd_print_utf(const char *str, uint8_t n=LCD_WIDTH) {
+  char c;
+  while (n && (c = *str)) n -= charset_mapper(c), ++str;
 }
 
-/* Arduino < 1.0.0 is missing a function to print PROGMEM strings, so we need to implement our own */
-void lcd_printPGM(const char* str) {
-  for (; char c = pgm_read_byte(str); ++str) lcd_print(c);
+void lcd_printPGM_utf(const char *str, uint8_t n=LCD_WIDTH) {
+  char c;
+  while (n && (c = pgm_read_byte(str))) n -= charset_mapper(c), ++str;
 }
 
-// Initialize or re-initializw the LCD
+#if ENABLED(SHOW_BOOTSCREEN)
+
+  #if ENABLED(SHOW_CUSTOM_BOOTSCREEN)
+
+    void lcd_custom_bootscreen() {
+      constexpr u8g_uint_t left = (LCD_PIXEL_WIDTH  - (CUSTOM_BOOTSCREEN_BMPWIDTH)) / 2,
+                           top = (LCD_PIXEL_HEIGHT - (CUSTOM_BOOTSCREEN_BMPHEIGHT)) / 2;
+      #if ENABLED(CUSTOM_BOOTSCREEN_INVERTED)
+        constexpr u8g_uint_t right = left + CUSTOM_BOOTSCREEN_BMPWIDTH,
+                             bottom = top + CUSTOM_BOOTSCREEN_BMPHEIGHT;
+      #endif
+      u8g.firstPage();
+      do {
+        u8g.drawBitmapP(
+          left, top,
+          CEILING(CUSTOM_BOOTSCREEN_BMPWIDTH, 8), CUSTOM_BOOTSCREEN_BMPHEIGHT, custom_start_bmp
+        );
+        #if ENABLED(CUSTOM_BOOTSCREEN_INVERTED)
+          u8g.setColorIndex(1);
+          if (top) u8g.drawBox(0, 0, LCD_PIXEL_WIDTH, top);
+          if (left) u8g.drawBox(0, top, left, CUSTOM_BOOTSCREEN_BMPHEIGHT);
+          if (right < LCD_PIXEL_WIDTH) u8g.drawBox(right, top, LCD_PIXEL_WIDTH - right, CUSTOM_BOOTSCREEN_BMPHEIGHT);
+          if (bottom < LCD_PIXEL_HEIGHT) u8g.drawBox(0, bottom, LCD_PIXEL_WIDTH, LCD_PIXEL_HEIGHT - bottom);
+        #endif
+      } while (u8g.nextPage());
+      safe_delay(CUSTOM_BOOTSCREEN_TIMEOUT);
+    }
+
+  #endif // SHOW_CUSTOM_BOOTSCREEN
+
+  void lcd_bootscreen() {
+    #if ENABLED(SHOW_CUSTOM_BOOTSCREEN)
+      lcd_custom_bootscreen();
+    #endif
+
+    constexpr uint8_t offy =
+      #if ENABLED(START_BMPHIGH)
+        (LCD_PIXEL_HEIGHT - (START_BMPHEIGHT)) / 2
+      #else
+        DOG_CHAR_HEIGHT
+      #endif
+    ;
+
+    const uint8_t width = u8g.getWidth(), height = u8g.getHeight(),
+                  offx = (width - (START_BMPWIDTH)) / 2;
+
+    u8g.firstPage();
+    do {
+      u8g.drawBitmapP(offx, offy, (START_BMPWIDTH + 7) / 8, START_BMPHEIGHT, start_bmp);
+      lcd_setFont(FONT_MENU);
+      #ifndef STRING_SPLASH_LINE2
+        const uint8_t txt1X = width - (sizeof(STRING_SPLASH_LINE1) - 1) * (DOG_CHAR_WIDTH);
+        u8g.drawStr(txt1X, (height + DOG_CHAR_HEIGHT) / 2, STRING_SPLASH_LINE1);
+      #else
+        const uint8_t txt1X = (width - (sizeof(STRING_SPLASH_LINE1) - 1) * (DOG_CHAR_WIDTH)) / 2,
+                      txt2X = (width - (sizeof(STRING_SPLASH_LINE2) - 1) * (DOG_CHAR_WIDTH)) / 2;
+        u8g.drawStr(txt1X, height - (DOG_CHAR_HEIGHT) * 3 / 2, STRING_SPLASH_LINE1);
+        u8g.drawStr(txt2X, height - (DOG_CHAR_HEIGHT) * 1 / 2, STRING_SPLASH_LINE2);
+      #endif
+    } while (u8g.nextPage());
+    safe_delay(BOOTSCREEN_TIMEOUT);
+  }
+
+#endif // SHOW_BOOTSCREEN
+
+#if ENABLED(LIGHTWEIGHT_UI)
+  #include "status_screen_lite_ST7920.h"
+#else
+  #include "status_screen_DOGM.h"
+#endif
+
+// Initialize or re-initialize the LCD
 static void lcd_implementation_init() {
 
   #if PIN_EXISTS(LCD_BACKLIGHT) // Enable LCD backlight
     OUT_WRITE(LCD_BACKLIGHT_PIN, HIGH);
   #endif
 
+  #if !defined(LCD_RESET_PIN) && (ENABLED(MKS_12864OLED) || ENABLED(MKS_12864OLED_SSD1306))
+    #define LCD_RESET_PIN LCD_PINS_RS
+  #endif
+
   #if PIN_EXISTS(LCD_RESET)
+    OUT_WRITE(LCD_RESET_PIN, LOW); // perform a clean hardware reset
+    _delay_ms(5);
     OUT_WRITE(LCD_RESET_PIN, HIGH);
+    _delay_ms(5); // delay to allow the display to initalize
+  #endif
+
+  #if PIN_EXISTS(LCD_RESET)
+    u8g.begin();
   #endif
 
   #if DISABLED(MINIPANEL) // setContrast not working for Mini Panel
@@ -262,389 +382,68 @@ static void lcd_implementation_init() {
   #elif ENABLED(LCD_SCREEN_ROT_270)
     u8g.setRot270();  // Rotate screen by 270°
   #endif
-
-  #if ENABLED(SHOW_BOOTSCREEN)
-    static bool show_bootscreen = true;
-
-    #if ENABLED(SHOW_CUSTOM_BOOTSCREEN)
-      if (show_bootscreen) {
-        u8g.firstPage();
-        do {
-          u8g.drawBitmapP(
-            (128 - (CUSTOM_BOOTSCREEN_BMPWIDTH))  /2,
-            ( 64 - (CUSTOM_BOOTSCREEN_BMPHEIGHT)) /2,
-            CEILING(CUSTOM_BOOTSCREEN_BMPWIDTH, 8), CUSTOM_BOOTSCREEN_BMPHEIGHT, custom_start_bmp);
-        } while (u8g.nextPage());
-        safe_delay(CUSTOM_BOOTSCREEN_TIMEOUT);
-      }
-    #endif // SHOW_CUSTOM_BOOTSCREEN
-
-    const uint8_t offx = (u8g.getWidth() - (START_BMPWIDTH)) / 2;
-
-    #if ENABLED(START_BMPHIGH)
-      constexpr uint8_t offy = 0;
-    #else
-      constexpr uint8_t offy = DOG_CHAR_HEIGHT;
-    #endif
-
-    const uint8_t txt1X = (u8g.getWidth() - (sizeof(STRING_SPLASH_LINE1) - 1) * (DOG_CHAR_WIDTH)) / 2;
-
-    if (show_bootscreen) {
-      u8g.firstPage();
-      do {
-        u8g.drawBitmapP(offx, offy, START_BMPBYTEWIDTH, START_BMPHEIGHT, start_bmp);
-        lcd_setFont(FONT_MENU);
-        #ifndef STRING_SPLASH_LINE2
-          u8g.drawStr(txt1X, u8g.getHeight() - (DOG_CHAR_HEIGHT), STRING_SPLASH_LINE1);
-        #else
-          const uint8_t txt2X = (u8g.getWidth() - (sizeof(STRING_SPLASH_LINE2) - 1) * (DOG_CHAR_WIDTH)) / 2;
-          u8g.drawStr(txt1X, u8g.getHeight() - (DOG_CHAR_HEIGHT) * 3 / 2, STRING_SPLASH_LINE1);
-          u8g.drawStr(txt2X, u8g.getHeight() - (DOG_CHAR_HEIGHT) * 1 / 2, STRING_SPLASH_LINE2);
-        #endif
-      } while (u8g.nextPage());
-    }
-
-    show_bootscreen = false;
-
-  #endif // SHOW_BOOTSCREEN
 }
 
 // The kill screen is displayed for unrecoverable conditions
 void lcd_kill_screen() {
-  lcd_setFont(FONT_MENU);
-  u8g.setPrintPos(0, u8g.getHeight()/4*1);
-  lcd_print(lcd_status_message);
-  u8g.setPrintPos(0, u8g.getHeight()/4*2);
-  lcd_printPGM(PSTR(MSG_HALTED));
-  u8g.setPrintPos(0, u8g.getHeight()/4*3);
-  lcd_printPGM(PSTR(MSG_PLEASE_RESET));
-}
-
-static void lcd_implementation_clear() { } // Automatically cleared by Picture Loop
-
-//
-// Status Screen
-//
-
-FORCE_INLINE void _draw_centered_temp(const int temp, const uint8_t x, const uint8_t y) {
-  const uint8_t degsize = 6 * (temp >= 100 ? 3 : temp >= 10 ? 2 : 1); // number's pixel width
-  u8g.setPrintPos(x - (18 - degsize) / 2, y); // move left if shorter
-  lcd_print(itostr3(temp));
-  lcd_printPGM(PSTR(LCD_STR_DEGREE " "));
-}
-
-FORCE_INLINE void _draw_heater_status(const uint8_t x, const int8_t heater) {
-  #if HAS_TEMP_BED
-    bool isBed = heater < 0;
-  #else
-    const bool isBed = false;
+  #if ENABLED(LIGHTWEIGHT_UI)
+    ST7920_Lite_Status_Screen::clear_text_buffer();
   #endif
-
-  if (PAGE_UNDER(7))
-    _draw_centered_temp((isBed ? thermalManager.degTargetBed() : thermalManager.degTargetHotend(heater)) + 0.5, x, 7);
-
-  if (PAGE_CONTAINS(21, 28))
-    _draw_centered_temp((isBed ? thermalManager.degBed() : thermalManager.degHotend(heater)) + 0.5, x, 28);
-
-  if (PAGE_CONTAINS(17, 20)) {
-    const uint8_t h = isBed ? 7 : 8,
-                  y = isBed ? 18 : 17;
-    if (isBed ? thermalManager.isHeatingBed() : thermalManager.isHeatingHotend(heater)) {
-      u8g.setColorIndex(0); // white on black
-      u8g.drawBox(x + h, y, 2, 2);
-      u8g.setColorIndex(1); // black on white
-    }
-    else {
-      u8g.drawBox(x + h, y, 2, 2);
-    }
-  }
-}
-
-FORCE_INLINE void _draw_axis_label(const AxisEnum axis, const char* const pstr, const bool blink) {
-  if (blink)
-    lcd_printPGM(pstr);
-  else {
-    if (!axis_homed[axis])
-      u8g.print('?');
-    else {
-      #if DISABLED(DISABLE_REDUCED_ACCURACY_WARNING)
-        if (!axis_known_position[axis])
-          u8g.print(' ');
-        else
-      #endif
-      lcd_printPGM(pstr);
-    }
-  }
-}
-
-//#define DOGM_SD_PERCENT
-
-static void lcd_implementation_status_screen() {
-
-  bool blink = lcd_blink();
-
-  // Black color, white background
-  u8g.setColorIndex(1);
-
-  // Status Menu Font
-  lcd_setFont(FONT_STATUSMENU);
-
-  //
-  // Fan Animation
-  //
-
-  if (PAGE_UNDER(STATUS_SCREENHEIGHT + 1)) {
-
-    u8g.drawBitmapP(9, 1, STATUS_SCREENBYTEWIDTH, STATUS_SCREENHEIGHT,
-      #if HAS_FAN0
-        blink && fanSpeeds[0] ? status_screen0_bmp : status_screen1_bmp
-      #else
-        status_screen0_bmp
-      #endif
-    );
-
-  }
-
-  //
-  // Temperature Graphics and Info
-  //
-
-  if (PAGE_UNDER(28)) {
-    // Extruders
-    HOTEND_LOOP() _draw_heater_status(5 + e * 25, e);
-
-    // Heated bed
-    #if HOTENDS < 4 && HAS_TEMP_BED
-      _draw_heater_status(81, -1);
-    #endif
-
-    if (PAGE_CONTAINS(20, 27)) {
-      // Fan
-      u8g.setPrintPos(104, 27);
-      #if HAS_FAN0
-        int per = ((fanSpeeds[0] + 1) * 100) / 256;
-        if (per) {
-          lcd_print(itostr3(per));
-          u8g.print('%');
-        }
-      #endif
-    }
-  }
-
-  #if ENABLED(SDSUPPORT)
-
-    //
-    // SD Card Symbol
-    //
-
-    if (PAGE_CONTAINS(42 - (TALL_FONT_CORRECTION), 51 - (TALL_FONT_CORRECTION))) {
-      // Upper box
-      u8g.drawBox(42, 42 - (TALL_FONT_CORRECTION), 8, 7);     // 42-48 (or 41-47)
-      // Right edge
-      u8g.drawBox(50, 44 - (TALL_FONT_CORRECTION), 2, 5);     // 44-48 (or 43-47)
-      // Bottom hollow box
-      u8g.drawFrame(42, 49 - (TALL_FONT_CORRECTION), 10, 4);  // 49-52 (or 48-51)
-      // Corner pixel
-      u8g.drawPixel(50, 43 - (TALL_FONT_CORRECTION));         // 43 (or 42)
-    }
-
-    //
-    // Progress bar frame
-    //
-
-    #define PROGRESS_BAR_X 54
-    #define PROGRESS_BAR_WIDTH (LCD_PIXEL_WIDTH - PROGRESS_BAR_X)
-
-    if (PAGE_CONTAINS(49, 52 - (TALL_FONT_CORRECTION)))       // 49-52 (or 49-51)
-      u8g.drawFrame(
-        PROGRESS_BAR_X, 49,
-        PROGRESS_BAR_WIDTH, 4 - (TALL_FONT_CORRECTION)
-      );
-
-    if (IS_SD_PRINTING) {
-
-      //
-      // Progress bar solid part
-      //
-
-      if (PAGE_CONTAINS(50, 51 - (TALL_FONT_CORRECTION)))     // 50-51 (or just 50)
-        u8g.drawBox(
-          PROGRESS_BAR_X + 1, 50,
-          (unsigned int)((PROGRESS_BAR_WIDTH - 2) * card.percentDone() * 0.01), 2 - (TALL_FONT_CORRECTION)
-        );
-
-      //
-      // SD Percent Complete
-      //
-
-      #if ENABLED(DOGM_SD_PERCENT)
-        if (PAGE_CONTAINS(41, 48)) {
-          // Percent complete
-          u8g.setPrintPos(55, 48);
-          u8g.print(itostr3(card.percentDone()));
-          u8g.print('%');
-        }
-      #endif
-    }
-
-    //
-    // Elapsed Time
-    //
-
-    #if DISABLED(DOGM_SD_PERCENT)
-      #define SD_DURATION_X (PROGRESS_BAR_X + (PROGRESS_BAR_WIDTH / 2) - len * (DOG_CHAR_WIDTH / 2))
-    #else
-      #define SD_DURATION_X (LCD_PIXEL_WIDTH - len * DOG_CHAR_WIDTH)
-    #endif
-
-    if (PAGE_CONTAINS(41, 48)) {
-
-      char buffer[10];
-      duration_t elapsed = print_job_timer.duration();
-      bool has_days = (elapsed.value > 60*60*24L);
-      uint8_t len = elapsed.toDigital(buffer, has_days);
-      u8g.setPrintPos(SD_DURATION_X, 48);
-      lcd_print(buffer);
-    }
-
-  #endif
-
-  //
-  // XYZ Coordinates
-  //
-
-  #if ENABLED(USE_SMALL_INFOFONT)
-    #define INFO_FONT_HEIGHT 7
-  #else
-    #define INFO_FONT_HEIGHT 8
-  #endif
-
-  #define XYZ_BASELINE (30 + INFO_FONT_HEIGHT)
-
-  #define X_LABEL_POS  3
-  #define X_VALUE_POS 11
-  #define XYZ_SPACING 40
-
-  // Enable to save many cycles by drawing a hollow frame
-  #define XYZ_HOLLOW_FRAME
-  #define MENU_HOLLOW_FRAME
-
-  #if ENABLED(XYZ_HOLLOW_FRAME)
-    #define XYZ_FRAME_TOP 29
-    #define XYZ_FRAME_HEIGHT INFO_FONT_HEIGHT + 3
-  #else
-    #define XYZ_FRAME_TOP 30
-    #define XYZ_FRAME_HEIGHT INFO_FONT_HEIGHT + 1
-  #endif
-
-  // Before homing the axis letters are blinking 'X' <-> '?'.
-  // When axis is homed but axis_known_position is false the axis letters are blinking 'X' <-> ' '.
-  // When everything is ok you see a constant 'X'.
-
-  static char xstring[5], ystring[5], zstring[7];
-
-  // At the first page, regenerate the XYZ strings
-  if (page.page == 0) {
-    strcpy(xstring, ftostr4sign(current_position[X_AXIS]));
-    strcpy(ystring, ftostr4sign(current_position[Y_AXIS]));
-    strcpy(zstring, ftostr52sp(current_position[Z_AXIS] + 0.00001));
-  }
-
-  if (PAGE_CONTAINS(XYZ_FRAME_TOP, XYZ_FRAME_TOP + XYZ_FRAME_HEIGHT - 1)) {
-
-    #if ENABLED(XYZ_HOLLOW_FRAME)
-      u8g.drawFrame(0, XYZ_FRAME_TOP, LCD_PIXEL_WIDTH, XYZ_FRAME_HEIGHT); // 8: 29-40  7: 29-39
-    #else
-      u8g.drawBox(0, XYZ_FRAME_TOP, LCD_PIXEL_WIDTH, XYZ_FRAME_HEIGHT);   // 8: 30-39  7: 30-37
-    #endif
-
-    if (PAGE_CONTAINS(XYZ_BASELINE - (INFO_FONT_HEIGHT - 1), XYZ_BASELINE)) {
-
-      #if DISABLED(XYZ_HOLLOW_FRAME)
-        u8g.setColorIndex(0); // white on black
-      #endif
-
-      u8g.setPrintPos(0 * XYZ_SPACING + X_LABEL_POS, XYZ_BASELINE);
-      _draw_axis_label(X_AXIS, PSTR(MSG_X), blink);
-      u8g.setPrintPos(0 * XYZ_SPACING + X_VALUE_POS, XYZ_BASELINE);
-      lcd_print(xstring);
-
-      u8g.setPrintPos(1 * XYZ_SPACING + X_LABEL_POS, XYZ_BASELINE);
-      _draw_axis_label(Y_AXIS, PSTR(MSG_Y), blink);
-      u8g.setPrintPos(1 * XYZ_SPACING + X_VALUE_POS, XYZ_BASELINE);
-      lcd_print(ystring);
-
-      u8g.setPrintPos(2 * XYZ_SPACING + X_LABEL_POS, XYZ_BASELINE);
-      _draw_axis_label(Z_AXIS, PSTR(MSG_Z), blink);
-      u8g.setPrintPos(2 * XYZ_SPACING + X_VALUE_POS, XYZ_BASELINE);
-      lcd_print(zstring);
-
-      #if DISABLED(XYZ_HOLLOW_FRAME)
-        u8g.setColorIndex(1); // black on white
-      #endif
-    }
-  }
-
-  //
-  // Feedrate
-  //
-
-  if (PAGE_CONTAINS(51 - INFO_FONT_HEIGHT, 49)) {
+  const uint8_t h4 = u8g.getHeight() / 4;
+  u8g.firstPage();
+  do {
     lcd_setFont(FONT_MENU);
-    u8g.setPrintPos(3, 50);
-    lcd_print(LCD_STR_FEEDRATE[0]);
-
-    lcd_setFont(FONT_STATUSMENU);
-    u8g.setPrintPos(12, 50);
-    lcd_print(itostr3(feedrate_percentage));
-    u8g.print('%');
-  }
-
-  //
-  // Status line
-  //
-
-  #define STATUS_BASELINE (55 + INFO_FONT_HEIGHT)
-
-  if (PAGE_CONTAINS(STATUS_BASELINE + 1 - INFO_FONT_HEIGHT, STATUS_BASELINE)) {
-    u8g.setPrintPos(0, STATUS_BASELINE);
-
-    #if DISABLED(FILAMENT_LCD_DISPLAY)
-      lcd_print(lcd_status_message);
-    #else
-      if (PENDING(millis(), previous_lcd_status_ms + 5000UL)) {  //Display both Status message line and Filament display on the last line
-        lcd_print(lcd_status_message);
-      }
-      else {
-        lcd_printPGM(PSTR("dia:"));
-        lcd_print(ftostr12ns(filament_width_meas));
-        lcd_printPGM(PSTR(" factor:"));
-        lcd_print(itostr3(100.0 * volumetric_multiplier[FILAMENT_SENSOR_EXTRUDER_NUM]));
-        u8g.print('%');
-      }
-    #endif
-  }
+    u8g.setPrintPos(0, h4 * 1);
+    lcd_print_utf(lcd_status_message);
+    u8g.setPrintPos(0, h4 * 2);
+    lcd_printPGM_utf(PSTR(MSG_HALTED));
+    u8g.setPrintPos(0, h4 * 3);
+    lcd_printPGM_utf(PSTR(MSG_PLEASE_RESET));
+  } while (u8g.nextPage());
 }
+
+void lcd_implementation_clear() { } // Automatically cleared by Picture Loop
 
 #if ENABLED(ULTIPANEL)
 
   uint8_t row_y1, row_y2;
+  uint8_t constexpr row_height = DOG_CHAR_HEIGHT + 2 * (TALL_FONT_CORRECTION);
+
+  #if ENABLED(ADVANCED_PAUSE_FEATURE)
+
+    static void lcd_implementation_hotend_status(const uint8_t row, const uint8_t extruder=active_extruder) {
+      row_y1 = row * row_height + 1;
+      row_y2 = row_y1 + row_height - 1;
+
+      if (!PAGE_CONTAINS(row_y1 + 1, row_y2 + 2)) return;
+
+      u8g.setPrintPos(LCD_PIXEL_WIDTH - 11 * (DOG_CHAR_WIDTH), row_y2);
+      lcd_print('E');
+      lcd_print((char)('1' + extruder));
+      lcd_print(' ');
+      lcd_print(itostr3(thermalManager.degHotend(extruder)));
+      lcd_print('/');
+
+      if (lcd_blink() || !thermalManager.is_heater_idle(extruder))
+        lcd_print(itostr3(thermalManager.degTargetHotend(extruder)));
+    }
+
+  #endif // ADVANCED_PAUSE_FEATURE
 
   // Set the colors for a menu item based on whether it is selected
   static void lcd_implementation_mark_as_selected(const uint8_t row, const bool isSelected) {
+    row_y1 = row * row_height + 1;
+    row_y2 = row_y1 + row_height - 1;
 
-    row_y1 = row * (DOG_CHAR_HEIGHT + 2 * (TALL_FONT_CORRECTION)) + 1;
-    row_y2 = row_y1 + (DOG_CHAR_HEIGHT + 2 * (TALL_FONT_CORRECTION)) - 1;
-
-    if (!PAGE_CONTAINS(row_y1 + 1, row_y1 + 1 + DOG_CHAR_HEIGHT + 2 * (TALL_FONT_CORRECTION))) return;
+    if (!PAGE_CONTAINS(row_y1 + 1, row_y2 + 2)) return;
 
     if (isSelected) {
       #if ENABLED(MENU_HOLLOW_FRAME)
         u8g.drawHLine(0, row_y1 + 1, LCD_PIXEL_WIDTH);
-        u8g.drawHLine(0, row_y1 + 1 + DOG_CHAR_HEIGHT + 2 * (TALL_FONT_CORRECTION), LCD_PIXEL_WIDTH);
+        u8g.drawHLine(0, row_y2 + 2, LCD_PIXEL_WIDTH);
       #else
         u8g.setColorIndex(1); // black on white
-        u8g.drawBox(0, row_y1 + 2, LCD_PIXEL_WIDTH, DOG_CHAR_HEIGHT - 1 + 2 * (TALL_FONT_CORRECTION));
+        u8g.drawBox(0, row_y1 + 2, LCD_PIXEL_WIDTH, row_height - 1);
         u8g.setColorIndex(0); // white on black
       #endif
     }
@@ -656,34 +455,30 @@ static void lcd_implementation_status_screen() {
     u8g.setPrintPos((START_COL) * (DOG_CHAR_WIDTH), row_y2);
   }
 
-  #if ENABLED(LCD_INFO_MENU) || ENABLED(FILAMENT_CHANGE_FEATURE)
+  // Draw a static line of text in the same idiom as a menu item
+  static void lcd_implementation_drawmenu_static(const uint8_t row, const char* pstr, const bool center=true, const bool invert=false, const char* valstr=NULL) {
 
-    // Draw a static line of text in the same idiom as a menu item
-    static void lcd_implementation_drawmenu_static(const uint8_t row, const char* pstr, const bool center=true, const bool invert=false, const char* valstr=NULL) {
+    lcd_implementation_mark_as_selected(row, invert);
 
-      lcd_implementation_mark_as_selected(row, invert);
+    if (!PAGE_CONTAINS(row_y1, row_y2)) return;
 
-      if (!PAGE_CONTAINS(row_y1, row_y2)) return;
+    char c;
+    int8_t n = LCD_WIDTH - (START_COL);
 
-      char c;
-      int8_t n = LCD_WIDTH - (START_COL);
-
-      if (center && !valstr) {
-        int8_t pad = (LCD_WIDTH - lcd_strlen_P(pstr)) / 2;
-        while (--pad >= 0) { u8g.print(' '); n--; }
-      }
-      while (n > 0 && (c = pgm_read_byte(pstr))) {
-        n -= lcd_print_and_count(c);
-        pstr++;
-      }
-      if (valstr) while (n > 0 && (c = *valstr)) {
-        n -= lcd_print_and_count(c);
-        valstr++;
-      }
-      while (n-- > 0) u8g.print(' ');
+    if (center && !valstr) {
+      int8_t pad = (LCD_WIDTH - utf8_strlen_P(pstr)) / 2;
+      while (--pad >= 0) { u8g.print(' '); n--; }
     }
-
-  #endif // LCD_INFO_MENU || FILAMENT_CHANGE_FEATURE
+    while (n > 0 && (c = pgm_read_byte(pstr))) {
+      n -= lcd_print_and_count(c);
+      pstr++;
+    }
+    if (valstr) while (n > 0 && (c = *valstr)) {
+      n -= lcd_print_and_count(c);
+      valstr++;
+    }
+    while (n-- > 0) u8g.print(' ');
+  }
 
   // Draw a generic menu item
   static void lcd_implementation_drawmenu_generic(const bool isSelected, const uint8_t row, const char* pstr, const char pre_char, const char post_char) {
@@ -717,7 +512,7 @@ static void lcd_implementation_status_screen() {
 
     if (!PAGE_CONTAINS(row_y1, row_y2)) return;
 
-    const uint8_t vallen = (pgm ? lcd_strlen_P(data) : (lcd_strlen((char*)data)));
+    const uint8_t vallen = (pgm ? utf8_strlen_P(data) : utf8_strlen((char*)data));
     uint8_t n = LCD_WIDTH - (START_COL) - 2 - vallen;
 
     while (char c = pgm_read_byte(pstr)) {
@@ -734,39 +529,22 @@ static void lcd_implementation_status_screen() {
   #define lcd_implementation_drawmenu_setting_edit_generic(sel, row, pstr, data) _drawmenu_setting_edit_generic(sel, row, pstr, data, false)
   #define lcd_implementation_drawmenu_setting_edit_generic_P(sel, row, pstr, data) _drawmenu_setting_edit_generic(sel, row, pstr, data, true)
 
-  #define lcd_implementation_drawmenu_setting_edit_int3(sel, row, pstr, pstr2, data, minValue, maxValue) lcd_implementation_drawmenu_setting_edit_generic(sel, row, pstr, itostr3(*(data)))
-  #define lcd_implementation_drawmenu_setting_edit_float3(sel, row, pstr, pstr2, data, minValue, maxValue) lcd_implementation_drawmenu_setting_edit_generic(sel, row, pstr, ftostr3(*(data)))
-  #define lcd_implementation_drawmenu_setting_edit_float32(sel, row, pstr, pstr2, data, minValue, maxValue) lcd_implementation_drawmenu_setting_edit_generic(sel, row, pstr, ftostr32(*(data)))
-  #define lcd_implementation_drawmenu_setting_edit_float43(sel, row, pstr, pstr2, data, minValue, maxValue) lcd_implementation_drawmenu_setting_edit_generic(sel, row, pstr, ftostr43sign(*(data)))
-  #define lcd_implementation_drawmenu_setting_edit_float5(sel, row, pstr, pstr2, data, minValue, maxValue) lcd_implementation_drawmenu_setting_edit_generic(sel, row, pstr, ftostr5rj(*(data)))
-  #define lcd_implementation_drawmenu_setting_edit_float52(sel, row, pstr, pstr2, data, minValue, maxValue) lcd_implementation_drawmenu_setting_edit_generic(sel, row, pstr, ftostr52sign(*(data)))
-  #define lcd_implementation_drawmenu_setting_edit_float51(sel, row, pstr, pstr2, data, minValue, maxValue) lcd_implementation_drawmenu_setting_edit_generic(sel, row, pstr, ftostr51sign(*(data)))
-  #define lcd_implementation_drawmenu_setting_edit_float62(sel, row, pstr, pstr2, data, minValue, maxValue) lcd_implementation_drawmenu_setting_edit_generic(sel, row, pstr, ftostr62sign(*(data)))
-  #define lcd_implementation_drawmenu_setting_edit_long5(sel, row, pstr, pstr2, data, minValue, maxValue) lcd_implementation_drawmenu_setting_edit_generic(sel, row, pstr, ftostr5rj(*(data)))
-  #define lcd_implementation_drawmenu_setting_edit_bool(sel, row, pstr, pstr2, data) lcd_implementation_drawmenu_setting_edit_generic_P(sel, row, pstr, (*(data))?PSTR(MSG_ON):PSTR(MSG_OFF))
-
-  #define lcd_implementation_drawmenu_setting_edit_callback_int3(sel, row, pstr, pstr2, data, minValue, maxValue, callback) lcd_implementation_drawmenu_setting_edit_generic(sel, row, pstr, itostr3(*(data)))
-  #define lcd_implementation_drawmenu_setting_edit_callback_float3(sel, row, pstr, pstr2, data, minValue, maxValue, callback) lcd_implementation_drawmenu_setting_edit_generic(sel, row, pstr, ftostr3(*(data)))
-  #define lcd_implementation_drawmenu_setting_edit_callback_float32(sel, row, pstr, pstr2, data, minValue, maxValue, callback) lcd_implementation_drawmenu_setting_edit_generic(sel, row, pstr, ftostr32(*(data)))
-  #define lcd_implementation_drawmenu_setting_edit_callback_float43(sel, row, pstr, pstr2, data, minValue, maxValue, callback) lcd_implementation_drawmenu_setting_edit_generic(sel, row, pstr, ftostr43sign(*(data)))
-  #define lcd_implementation_drawmenu_setting_edit_callback_float5(sel, row, pstr, pstr2, data, minValue, maxValue, callback) lcd_implementation_drawmenu_setting_edit_generic(sel, row, pstr, ftostr5rj(*(data)))
-  #define lcd_implementation_drawmenu_setting_edit_callback_float52(sel, row, pstr, pstr2, data, minValue, maxValue, callback) lcd_implementation_drawmenu_setting_edit_generic(sel, row, pstr, ftostr52sign(*(data)))
-  #define lcd_implementation_drawmenu_setting_edit_callback_float51(sel, row, pstr, pstr2, data, minValue, maxValue, callback) lcd_implementation_drawmenu_setting_edit_generic(sel, row, pstr, ftostr51sign(*(data)))
-  #define lcd_implementation_drawmenu_setting_edit_callback_float62(sel, row, pstr, pstr2, data, minValue, maxValue, callback) lcd_implementation_drawmenu_setting_edit_generic(sel, row, pstr, ftostr62sign(*(data)))
-  #define lcd_implementation_drawmenu_setting_edit_callback_long5(sel, row, pstr, pstr2, data, minValue, maxValue, callback) lcd_implementation_drawmenu_setting_edit_generic(sel, row, pstr, ftostr5rj(*(data)))
-  #define lcd_implementation_drawmenu_setting_edit_callback_bool(sel, row, pstr, pstr2, data, callback) lcd_implementation_drawmenu_setting_edit_generic_P(sel, row, pstr, (*(data))?PSTR(MSG_ON):PSTR(MSG_OFF))
+  #define DRAWMENU_SETTING_EDIT_GENERIC(_src) lcd_implementation_drawmenu_setting_edit_generic(sel, row, pstr, _src)
+  #define DRAW_BOOL_SETTING(sel, row, pstr, data) lcd_implementation_drawmenu_setting_edit_generic_P(sel, row, pstr, (*(data))?PSTR(MSG_ON):PSTR(MSG_OFF))
 
   void lcd_implementation_drawedit(const char* const pstr, const char* const value=NULL) {
-    const uint8_t labellen = lcd_strlen_P(pstr),
-                  vallen = lcd_strlen(value);
+    const uint8_t labellen = utf8_strlen_P(pstr),
+                  vallen = utf8_strlen(value);
 
     uint8_t rows = (labellen > LCD_WIDTH - 2 - vallen) ? 2 : 1;
 
     #if ENABLED(USE_BIG_EDIT_FONT)
+      constexpr uint8_t lcd_width_edit = (LCD_PIXEL_WIDTH) / (DOG_CHAR_WIDTH_EDIT);
+
       uint8_t lcd_width, char_width;
-      if (labellen <= LCD_WIDTH_EDIT - 1) {
-        if (labellen >= LCD_WIDTH_EDIT - vallen) rows = 2;
-        lcd_width = LCD_WIDTH_EDIT + 1;
+      if (labellen <= lcd_width_edit - 1) {
+        if (labellen + vallen + 2 >= lcd_width_edit) rows = 2;
+        lcd_width = lcd_width_edit + 1;
         char_width = DOG_CHAR_WIDTH_EDIT;
         lcd_setFont(FONT_MENU_EDIT);
       }
@@ -784,16 +562,21 @@ static void lcd_implementation_status_screen() {
     const uint8_t segmentHeight = u8g.getHeight() / (rows + 1); // 1 / (rows+1) = 1/2 or 1/3
     uint8_t baseline = segmentHeight + (DOG_CHAR_HEIGHT_EDIT + 1) / 2;
 
-    if (PAGE_CONTAINS(baseline + 1 - (DOG_CHAR_HEIGHT_EDIT), baseline)) {
+    bool onpage = PAGE_CONTAINS(baseline + 1 - (DOG_CHAR_HEIGHT_EDIT), baseline);
+    if (onpage) {
       u8g.setPrintPos(0, baseline);
-      lcd_printPGM(pstr);
+      lcd_printPGM_utf(pstr);
     }
 
     if (value != NULL) {
-      baseline += (rows - 1) * segmentHeight;
-      if (PAGE_CONTAINS(baseline + 1 - (DOG_CHAR_HEIGHT_EDIT), baseline)) {
-        u8g.print(':');
-        u8g.setPrintPos((lcd_width - 1 - vallen) * char_width, baseline);
+      u8g.print(':');
+      if (rows == 2) {
+        baseline += segmentHeight;
+        onpage = PAGE_CONTAINS(baseline + 1 - (DOG_CHAR_HEIGHT_EDIT), baseline);
+      }
+      if (onpage) {
+        u8g.setPrintPos(((lcd_width - 1) - (vallen + 1)) * char_width, baseline); // Right-justified, leaving padded by spaces
+        u8g.print(' '); // overwrite char if value gets shorter
         lcd_print(value);
       }
     }
@@ -801,33 +584,139 @@ static void lcd_implementation_status_screen() {
 
   #if ENABLED(SDSUPPORT)
 
-    static void _drawmenu_sd(const bool isSelected, const uint8_t row, const char* const pstr, const char* filename, char* const longFilename, const bool isDir) {
+    static void _drawmenu_sd(const bool isSelected, const uint8_t row, const char* const pstr, CardReader& theCard, const bool isDir) {
       UNUSED(pstr);
 
       lcd_implementation_mark_as_selected(row, isSelected);
 
       if (!PAGE_CONTAINS(row_y1, row_y2)) return;
 
-      uint8_t n = LCD_WIDTH - (START_COL) - 1;
-      if (longFilename[0]) {
-        filename = longFilename;
-        longFilename[n] = '\0';
+      constexpr uint8_t maxlen = LCD_WIDTH - (START_COL) - 1;
+      const char *outstr = theCard.longest_filename();
+      if (theCard.longFilename[0]) {
+        #if ENABLED(SCROLL_LONG_FILENAMES)
+          if (isSelected) {
+            uint8_t name_hash = row;
+            for (uint8_t l = FILENAME_LENGTH; l--;)
+              name_hash = ((name_hash << 1) | (name_hash >> 7)) ^ theCard.filename[l];  // rotate, xor
+            if (filename_scroll_hash != name_hash) {                            // If the hash changed...
+              filename_scroll_hash = name_hash;                                 // Save the new hash
+              filename_scroll_max = MAX(0, utf8_strlen(theCard.longFilename) - maxlen); // Update the scroll limit
+              filename_scroll_pos = 0;                                          // Reset scroll to the start
+              lcd_status_update_delay = 8;                                      // Don't scroll right away
+            }
+            outstr += filename_scroll_pos;
+          }
+        #else
+          theCard.longFilename[maxlen] = '\0'; // cutoff at screen edge
+        #endif
       }
 
       if (isDir) lcd_print(LCD_STR_FOLDER[0]);
 
-      while (char c = *filename) {
+      char c;
+      uint8_t n = maxlen;
+      while (n && (c = *outstr)) {
         n -= lcd_print_and_count(c);
-        filename++;
+        ++outstr;
       }
-      while (n--) u8g.print(' ');
+      while (n) { --n; u8g.print(' '); }
     }
 
-    #define lcd_implementation_drawmenu_sdfile(sel, row, pstr, filename, longFilename) _drawmenu_sd(sel, row, pstr, filename, longFilename, false)
-    #define lcd_implementation_drawmenu_sddirectory(sel, row, pstr, filename, longFilename) _drawmenu_sd(sel, row, pstr, filename, longFilename, true)
+    #define lcd_implementation_drawmenu_sdfile(sel, row, pstr, theCard) _drawmenu_sd(sel, row, pstr, theCard, false)
+    #define lcd_implementation_drawmenu_sddirectory(sel, row, pstr, theCard) _drawmenu_sd(sel, row, pstr, theCard, true)
 
   #endif // SDSUPPORT
 
+  #if ENABLED(AUTO_BED_LEVELING_UBL)
+
+    /**
+     * UBL LCD "radar" map data
+     */
+    #define MAP_UPPER_LEFT_CORNER_X 35  // These probably should be moved to the .h file  But for now,
+    #define MAP_UPPER_LEFT_CORNER_Y  8  // it is easier to play with things having them here
+    #define MAP_MAX_PIXELS_X        53
+    #define MAP_MAX_PIXELS_Y        49
+
+    void lcd_implementation_ubl_plot(const uint8_t x_plot, const uint8_t y_plot) {
+      // Scale the box pixels appropriately
+      uint8_t x_map_pixels = ((MAP_MAX_PIXELS_X - 4) / (GRID_MAX_POINTS_X)) * (GRID_MAX_POINTS_X),
+              y_map_pixels = ((MAP_MAX_PIXELS_Y - 4) / (GRID_MAX_POINTS_Y)) * (GRID_MAX_POINTS_Y),
+
+              pixels_per_x_mesh_pnt = x_map_pixels / (GRID_MAX_POINTS_X),
+              pixels_per_y_mesh_pnt = y_map_pixels / (GRID_MAX_POINTS_Y),
+
+              x_offset = MAP_UPPER_LEFT_CORNER_X + 1 + (MAP_MAX_PIXELS_X - x_map_pixels - 2) / 2,
+              y_offset = MAP_UPPER_LEFT_CORNER_Y + 1 + (MAP_MAX_PIXELS_Y - y_map_pixels - 2) / 2;
+
+      // Clear the Mesh Map
+
+      if (PAGE_CONTAINS(y_offset - 2, y_offset + y_map_pixels + 4)) {
+        u8g.setColorIndex(1);  // First draw the bigger box in White so we have a border around the mesh map box
+        u8g.drawBox(x_offset - 2, y_offset - 2, x_map_pixels + 4, y_map_pixels + 4);
+        if (PAGE_CONTAINS(y_offset, y_offset + y_map_pixels)) {
+          u8g.setColorIndex(0);  // Now actually clear the mesh map box
+          u8g.drawBox(x_offset, y_offset, x_map_pixels, y_map_pixels);
+        }
+      }
+
+      // Display Mesh Point Locations
+
+      u8g.setColorIndex(1);
+      const uint8_t sx = x_offset + pixels_per_x_mesh_pnt / 2;
+            uint8_t  y = y_offset + pixels_per_y_mesh_pnt / 2;
+      for (uint8_t j = 0; j < GRID_MAX_POINTS_Y; j++, y += pixels_per_y_mesh_pnt)
+        if (PAGE_CONTAINS(y, y))
+          for (uint8_t i = 0, x = sx; i < GRID_MAX_POINTS_X; i++, x += pixels_per_x_mesh_pnt)
+            u8g.drawBox(x, y, 1, 1);
+
+      // Fill in the Specified Mesh Point
+
+      uint8_t inverted_y = GRID_MAX_POINTS_Y - y_plot - 1;  // The origin is typically in the lower right corner.  We need to
+                                                            // invert the Y to get it to plot in the right location.
+
+      const uint8_t by = y_offset + inverted_y * pixels_per_y_mesh_pnt;
+      if (PAGE_CONTAINS(by, by + pixels_per_y_mesh_pnt))
+        u8g.drawBox(
+          x_offset + x_plot * pixels_per_x_mesh_pnt, by,
+          pixels_per_x_mesh_pnt, pixels_per_y_mesh_pnt
+        );
+
+      // Put Relevant Text on Display
+
+      // Show X and Y positions at top of screen
+      u8g.setColorIndex(1);
+      if (PAGE_UNDER(7)) {
+        u8g.setPrintPos(5, 7);
+        lcd_print("X:");
+        lcd_print(ftostr52(LOGICAL_X_POSITION(pgm_read_float(&ubl._mesh_index_to_xpos[x_plot]))));
+        u8g.setPrintPos(74, 7);
+        lcd_print("Y:");
+        lcd_print(ftostr52(LOGICAL_Y_POSITION(pgm_read_float(&ubl._mesh_index_to_ypos[y_plot]))));
+      }
+
+      // Print plot position
+      if (PAGE_CONTAINS(LCD_PIXEL_HEIGHT - (INFO_FONT_HEIGHT - 1), LCD_PIXEL_HEIGHT)) {
+        u8g.setPrintPos(5, LCD_PIXEL_HEIGHT);
+        lcd_print('(');
+        u8g.print(x_plot);
+        lcd_print(',');
+        u8g.print(y_plot);
+        lcd_print(')');
+
+        // Show the location value
+        u8g.setPrintPos(74, LCD_PIXEL_HEIGHT);
+        lcd_print("Z:");
+        if (!isnan(ubl.z_values[x_plot][y_plot]))
+          lcd_print(ftostr43sign(ubl.z_values[x_plot][y_plot]));
+        else
+          lcd_printPGM(PSTR(" -----"));
+      }
+
+    }
+
+  #endif // AUTO_BED_LEVELING_UBL
+
 #endif // ULTIPANEL
 
-#endif //__ULTRALCD_IMPL_DOGM_H
+#endif // __ULTRALCD_IMPL_DOGM_H
