@@ -32,8 +32,6 @@
 #include "../module/planner.h"
 #include "../module/temperature.h"
 #include "../Marlin.h"
-// PHR
-#include <string.h>
 
 #if ENABLED(PRINTER_EVENT_LEDS)
   #include "../feature/leds/printer_event_leds.h"
@@ -720,6 +718,43 @@ uint32_t sdposLastTimeUpdate = 0;
    * or until the end of the file is reached. The special character '#'
    * can also interrupt buffering.
    */
+   
+  inline int searchCharInArray(char* array, int length, char c){
+      for(int i = 0; i < length; i++){
+          if(array[i] == c){
+            return i;
+          }
+      }
+      return -1;
+  }
+  
+  inline long convertArrayToInt(char* array){
+      if(!(array[0] >= '0' && array[0] <= '9'))
+          return -1;
+      
+      long value = 0;
+      int i=0;
+      while((array[i] >= '0' && array[i] <= '9')){
+          value *= 10;
+          value += array[i];
+          i++;
+      }
+      return value;    
+  }
+  
+  bool compareArrays(char* array1, char* array2, int maxSize){
+    for(int i=0;i<maxSize;i++){
+      if(array1[i] != array2[i])
+        return false;
+    }
+    return true;
+  }
+  
+  void copieArrays(char* origine, char* dest, int start, int length){
+      for(int i=start;i<length;i++)
+        dest[i] = origine[i];
+  }
+  
   inline void get_sdcard_commands() {
     static bool stop_buffering = false,
                 sd_comment_mode = false
@@ -744,7 +779,9 @@ uint32_t sdposLastTimeUpdate = 0;
     uint16_t commantaire_count = 0;
     unsigned long  printHeureL = 0;
     unsigned long  printMinuteL = 0;
-    // String commentL = "";          
+    char titreLoc[MAX_CMD_SIZE] = {0};
+    char valueLoc[MAX_CMD_SIZE] = {0};
+    char tempLoc[MAX_CMD_SIZE] = {0};
     int separation = -1;
     
     uint16_t sd_count = 0;
@@ -816,49 +853,63 @@ uint32_t sdposLastTimeUpdate = 0;
       // PHR
       else if(sd_comment_mode){
         if (sd_char == '\n' || sd_char == '\r'){
-          /*commantaire_queue[commantaire_count] = 0; //terminate string
+          commantaire_queue[commantaire_count] = 0; //terminate string
           // !PHR
-          commentL = String(commantaire_queue);
+          // commentL = String(commantaire_queue);
           SERIAL_ECHO("\r\ncommentaire lu : ");
-          SERIAL_ECHOLN(commentL);
+          SERIAL_ECHOLN(commantaire_count);
           
           // !PHR
           // separation = commentL.indexOf(':');
           // SERIAL_ECHO("\r\nseparation : ");
           // SERIAL_ECHOLN(separation);
-          if(separation != -1){
-            String titreLoc = commentL.substring(0,separation);
-            String valueLoc = commentL.substring(separation+1);
-            // SERIAL_ECHO("Titre : ");
-            // SERIAL_ECHOLN(titreLoc);
-            // SERIAL_ECHO("Value : ");
-            // SERIAL_ECHOLN(valueLoc);
           
-            if(titreLoc == "TIME"){
-              printtime = valueLoc.toInt();
+          separation = searchCharInArray(commantaire_queue, commantaire_count, ':');
+           
+          if(separation != -1){
+            for(int i = 0; i < separation; i++)
+                titreLoc[i] = commantaire_queue[i];
+            for(int i = separation+1; i <= commantaire_count; i++)
+                valueLoc[i] = commantaire_queue[i];
+            
+            //String titreLoc = commentL.substring(0,separation);
+            //String valueLoc = commentL.substring(separation+1);
+            
+            SERIAL_ECHO("Titre : ");
+            SERIAL_ECHOLN(titreLoc);
+            SERIAL_ECHO("Value : ");
+            SERIAL_ECHOLN(valueLoc);
+            
+            if(compareArrays(titreLoc,"TIME",separation)){  
+              printtime = convertArrayToInt(valueLoc);
               tempsEcouleGCODE = 0;
               sdposLastTimeUpdate = 0;
-              //SERIAL_ECHO(" temps impression ");
-              //SERIAL_ECHO(printtime);
+              SERIAL_ECHO(" temps impression ");
+              SERIAL_ECHO(printtime);
             }
-            if(titreLoc == "Print time"){   // ;Print time: 2 heures 6 minutes
-              if(valueLoc.indexOf('h') != -1)
-                printHeureL = valueLoc.substring(1,valueLoc.indexOf('h')).toInt();
-  
-              if(valueLoc.indexOf('m') != -1)
-                printMinuteL = valueLoc.substring(valueLoc.indexOf(' ',valueLoc.indexOf('h'))+1,valueLoc.indexOf('m')).toInt();
-
+            /*if(compareArrays(titreLoc,"Print time",separation)){    // ;Print time: 2 heures 6 minutes
+              if(searchCharInArray(valueLoc, commantaire_count - separation, 'h') != -1){
+                copieArrays(valueLoc,tempLoc,1,commantaire_count - separation);
+                printHeureL = convertArrayToInt(tempLoc);
+              }
+              
+              if(searchCharInArray(valueLoc, commantaire_count - separation, 'm') != -1){
+                // printMinuteL = valueLoc.substring(valueLoc.indexOf(' ',valueLoc.indexOf('h'))+1,valueLoc.indexOf('m')).toInt();
+                copieArrays(valueLoc,tempLoc,1,commantaire_count - separation);
+                printMinuteL = convertArrayToInt(tempLoc);
+              }
+              
               printtime = (printHeureL*60 + printMinuteL);
               printtime *= 60;
               tempsEcouleGCODE = 0;
               //SERIAL_ECHO(" temps impression ");
               //SERIAL_ECHOLN(printtime);
-            }
-            if(titreLoc == "TIME_ELAPSED"){
-            tempsEcouleGCODE = valueLoc.substring(0,valueLoc.indexOf('.')).toInt();
+            }*/
+            if(compareArrays(titreLoc,"TIME_ELAPSED",separation)){
+            tempsEcouleGCODE = convertArrayToInt(valueLoc);
             sdposLastTimeUpdate = card.getSdpos();
-            //SERIAL_ECHO(" temps passe ");
-            //SERIAL_ECHO(tempsEcouleGCODE);
+            SERIAL_ECHO(" temps passe ");
+            SERIAL_ECHO(tempsEcouleGCODE);
             //SERIAL_ECHO(" percent donne ");
             //SERIAL_ECHOLN(card.percentDone001());
             //unsigned long  ecoule = print_job_timer.duration();
@@ -869,7 +920,7 @@ uint32_t sdposLastTimeUpdate = 0;
             // SERIAL_ECHO("fileNameLong:");
             // SERIAL_ECHOLN(fileNameLong);
             }
-          }*/
+          }
           sd_comment_mode = false;
           commantaire_count = 0;
         }
