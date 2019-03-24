@@ -48,6 +48,9 @@ typedef struct {
     ;
 } card_flags_t;
 
+// PHR
+extern uint32_t sdposLastTimeUpdate;
+
 class CardReader {
 public:
   CardReader();
@@ -121,6 +124,11 @@ public:
   static inline uint32_t getIndex() { return sdpos; }
   static inline uint8_t percentDone() { return (isFileOpen() && filesize) ? sdpos / ((filesize + 99) / 100) : 0; }
   static inline char* getWorkDirName() { workDir.getFilename(filename); return filename; }
+  // PHR
+  FORCE_INLINE uint32_t percentDone001() { return (isFileOpen() && filesize) ? (sdpos * 100) / ((filesize + 99) / 100) : 0; }
+  FORCE_INLINE uint32_t percentDone001(uint32_t sdposLastTimeUpdate_) {return (isFileOpen() && filesize) ? ((sdpos-sdposLastTimeUpdate) * 100) / ((filesize - sdposLastTimeUpdate + 99) / 100) : 0; }
+  FORCE_INLINE uint32_t getSdpos(){return sdpos;}
+    
   static inline int16_t read(void* buf, uint16_t nbyte) { return file.isOpen() ? file.read(buf, nbyte) : -1; }
   static inline int16_t write(void* buf, uint16_t nbyte) { return file.isOpen() ? file.write(buf, nbyte) : -1; }
 

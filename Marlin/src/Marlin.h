@@ -375,3 +375,8 @@ void protected_pin_err();
   void event_probe_recover();
   void event_probe_failure();
 #endif
+
+// PHR
+extern unsigned long printtime;
+extern uint32_t sdposLastTimeUpdate;
+extern unsigned long tempsEcouleGCODE;

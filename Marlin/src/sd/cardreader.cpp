@@ -314,13 +314,19 @@ void CardReader::printFilename() {
   if (file.isOpen()) {
     char dosFilename[FILENAME_LENGTH];
     file.getFilename(dosFilename);
-    SERIAL_ECHO(dosFilename);
+    // PHR
+    // SERIAL_ECHO(dosFilename);
     #if ENABLED(LONG_FILENAME_HOST_SUPPORT)
       getfilename(0, dosFilename);
       if (longFilename[0]) {
-        SERIAL_ECHO(' ');
-        SERIAL_ECHO(longFilename);
+        // PHR
+        // SERIAL_ECHO(' ');
+        // !PHR
+        // SERIAL_ECHO(longFilename);
       }
+    #else
+    // !PHR
+    // SERIAL_ECHO(dosFilename);
     #endif
   }
   else

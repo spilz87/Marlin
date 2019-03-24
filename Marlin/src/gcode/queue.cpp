@@ -709,6 +709,10 @@ inline void get_serial_commands() {
 
 #if ENABLED(SDSUPPORT)
 
+// PHR
+unsigned long printtime = 0;
+unsigned long tempsEcouleGCODE = 0;
+uint32_t sdposLastTimeUpdate = 0;
   /**
    * Get commands from the SD Card until the command buffer is full
    * or until the end of the file is reached. The special character '#'
@@ -733,14 +737,20 @@ inline void get_serial_commands() {
 
     if (commands_in_queue == 0) stop_buffering = false;
 
+    // PHR
+    char commantaire_queue[MAX_CMD_SIZE] = {0};
+    uint16_t commantaire_count = 0;
+    
+    
     uint16_t sd_count = 0;
     bool card_eof = card.eof();
     while (commands_in_queue < BUFSIZE && !card_eof && !stop_buffering) {
       const int16_t n = card.get();
       char sd_char = (char)n;
       card_eof = card.eof();
+      // PHR
       if (card_eof || n == -1
-          || sd_char == '\n' || sd_char == '\r'
+          || ((sd_char == '\n' || sd_char == '\r') && !sd_comment_mode)
           || ((sd_char == '#' || sd_char == ':') && !sd_comment_mode
             #if ENABLED(PAREN_COMMENTS)
               && !sd_comment_paren_mode
@@ -769,8 +779,9 @@ inline void get_serial_commands() {
             #endif // PRINTER_EVENT_LEDS
           }
         }
-        else if (n == -1)
-          SERIAL_ERROR_MSG(MSG_SD_ERR_READ);
+        else if (n == -1){
+          // SERIAL_ERROR_MSG(MSG_SD_ERR_READ);
+        }
 
         if (sd_char == '#') stop_buffering = true;
 

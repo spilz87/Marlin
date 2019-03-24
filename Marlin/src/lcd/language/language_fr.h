@@ -178,7 +178,8 @@
 #define MSG_EXTRA_FAN_SPEED                 _UxGT("Extra V ventil.")
 
 #define MSG_FLOW                            _UxGT("Flux")
-#define MSG_CONTROL                         _UxGT("Contrôler")
+// PHR
+#define MSG_CONTROL                         _UxGT("Config/Ctrl")
 #define MSG_MIN                             LCD_STR_THERMOMETER _UxGT(" Min")
 #define MSG_MAX                             LCD_STR_THERMOMETER _UxGT(" Max")
 #define MSG_FACTOR                          LCD_STR_THERMOMETER _UxGT(" Facteur")
@@ -202,7 +203,8 @@
   #define MSG_VC_JERK                       _UxGT("Vz jerk")
 #endif
 #define MSG_VE_JERK                         _UxGT("Ve jerk")
-#define MSG_VELOCITY                        _UxGT("Vélocité")
+// PHR
+#define MSG_VELOCITY                        _UxGT("Vitesse")
 #define MSG_VMAX                            _UxGT("Vmax ")
 #define MSG_VMIN                            _UxGT("Vmin ")
 #define MSG_VTRAV_MIN                       _UxGT("V dépl. min")
@@ -244,7 +246,8 @@
 #define MSG_WATCH                           _UxGT("Surveiller")
 #define MSG_PREPARE                         _UxGT("Préparer")
 #define MSG_TUNE                            _UxGT("Régler")
-#define MSG_PAUSE_PRINT                     _UxGT("Interrompre impr.")
+// PHR
+#define MSG_PAUSE_PRINT                     _UxGT("Pause impr.")
 #define MSG_RESUME_PRINT                    _UxGT("Reprendre impr.")
 #define MSG_STOP_PRINT                      _UxGT("Arrêter impr.")
 #define MSG_CARD_MENU                       _UxGT("Impr. depuis SD")

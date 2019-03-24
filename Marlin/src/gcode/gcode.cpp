@@ -759,6 +759,14 @@ void GcodeSuite::process_parsed_command(
     }
     break;
 
+    // PHR
+    case 'P': switch (parser.codenum) {
+        #if ENABLED(SDSUPPORT)
+        case 0: P0();  break;
+        #endif
+    }
+    break;
+    
     case 'T': T(parser.codenum); break;                           // Tn: Tool Change
 
     default: parser.unknown_command_error();

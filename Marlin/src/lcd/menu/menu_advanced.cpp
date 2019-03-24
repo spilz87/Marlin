@@ -641,10 +641,11 @@ void menu_advanced_settings() {
     // M205 - Max Jerk
     MENU_ITEM(submenu, MSG_JERK, menu_advanced_jerk);
 
-    if (!printer_busy()) {
+    // PHR
+    // if (!printer_busy()) {
       // M92 - Steps Per mm
       MENU_ITEM(submenu, MSG_STEPS_PER_MM, menu_advanced_steps_per_mm);
-    }
+    // }
   #endif // !SLIM_LCD_MENUS
 
   #if ENABLED(DAC_STEPPER_CURRENT)

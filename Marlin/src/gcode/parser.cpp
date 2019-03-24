@@ -137,7 +137,8 @@ void GCodeParser::parse(char *p) {
   // (or a valid parameter for the current motion mode)
   switch (letter) {
 
-    case 'G': case 'M': case 'T':
+    // PHR
+    case 'G': case 'M': case 'T': case 'P':
 
       // Skip spaces to get the numeric part
       while (*p == ' ') p++;
@@ -201,7 +202,8 @@ void GCodeParser::parse(char *p) {
         case 'I': case 'J': case 'R':
           if (motion_mode_codenum != 2 && motion_mode_codenum != 3) return;
       #endif
-      case 'P': case 'Q':
+      // PHR case 'P': 
+      case 'Q':
         if (motion_mode_codenum != 5) return;
       case 'X': case 'Y': case 'Z': case 'E': case 'F':
         if (motion_mode_codenum < 0) return;

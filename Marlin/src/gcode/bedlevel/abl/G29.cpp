@@ -796,6 +796,27 @@ G29_TYPE GcodeSuite::G29() {
       if (!dryrun) extrapolate_unprobed_bed_level();
       print_bilinear_leveling_grid();
 
+      // PHR
+      report_current_position();
+      float l = 0, v = 0;
+      for (uint8_t i = 0; i < GRID_MAX_POINTS_X; i++) {
+          for (uint8_t j = 0; j < GRID_MAX_POINTS_Y; j++) {
+              l += z_values[i][j];
+          }
+      }
+      l /= (GRID_MAX_POINTS_X * GRID_MAX_POINTS_Y);
+      v = LOGICAL_TO_NATIVE(l, Z_AXIS);
+      current_position[Z_AXIS] -= v;
+      update_software_endstops((AxisEnum)Z_AXIS);
+      report_current_position();
+      for (uint8_t i = 0; i < 3; ++i) {
+        for (uint8_t j = 0; j < 3; ++j) {
+          z_values[i][j] -= l;
+        }
+      }
+      
+        
+
       refresh_bed_level();
 
       #if ENABLED(ABL_BILINEAR_SUBDIVISION)

@@ -875,6 +875,11 @@ private:
     static void M1000();
   #endif
 
+  // PHR
+  #if ENABLED(SDSUPPORT)
+    static void P0();
+  #endif
+  
   static void T(const uint8_t tool_index);
 
 };

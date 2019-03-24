@@ -44,6 +44,14 @@ extern long gcode_LastN, Stopped_gcode_LastN;
  * the main loop. The gcode.process_next_command method parses the next
  * command and hands off execution to individual handler functions.
  */
+// PHR
+#include "../module/printcounter.h"
+#if ENABLED(PRINTCOUNTER)
+  extern PrintCounter print_job_timer;
+#else
+  extern Stopwatch print_job_timer;
+#endif
+
 extern uint8_t commands_in_queue, // Count of commands in the queue
                cmd_queue_index_r; // Ring buffer read position
 
