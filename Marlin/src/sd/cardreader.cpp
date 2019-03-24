@@ -321,12 +321,11 @@ void CardReader::printFilename() {
       if (longFilename[0]) {
         // PHR
         // SERIAL_ECHO(' ');
-        // !PHR
-        // SERIAL_ECHO(longFilename);
+        // PHR
+        SERIAL_ECHO(longFilename);
       }
     #else
-    // !PHR
-    // SERIAL_ECHO(dosFilename);
+    SERIAL_ECHO(dosFilename);
     #endif
   }
   else

@@ -455,14 +455,38 @@ void MarlinUI::draw_status_screen() {
     #endif
 
     if (PAGE_CONTAINS(EXTRAS_BASELINE - INFO_FONT_ASCENT, EXTRAS_BASELINE - 1)) {
+      // PHR
+      /*
       char buffer[13];
       duration_t elapsed = print_job_timer.duration();
       bool has_days = (elapsed.value >= 60*60*24L);
       uint8_t len = elapsed.toDigital(buffer, has_days);
       lcd_moveto(SD_DURATION_X, EXTRAS_BASELINE);
       lcd_put_u8str(buffer);
-    }
-
+      */
+      #if ENABLED(SDSUPPORT)
+        char buffer[10];
+          unsigned long  printTimeRest = 0;
+          if(printtime != 0){
+            printTimeRest = (printtime-tempsEcouleGCODE)*(10000-card.percentDone001(sdposLastTimeUpdate));
+            printTimeRest /= feedrate_percentage;
+            printTimeRest /= 100;
+          }
+          else{
+            printTimeRest = print_job_timer.duration();
+          }
+          duration_t elapsed = printTimeRest;
+          uint8_t len = elapsed.toDigital(buffer, false);
+      #else
+          char buffer[13];
+          duration_t elapsed = print_job_timer.duration();
+          bool has_days = (elapsed.value >= 60*60*24L);
+          uint8_t len = elapsed.toDigital(buffer, has_days);
+      #endif
+      lcd_moveto(SD_DURATION_X, EXTRAS_BASELINE);
+      lcd_put_u8str(buffer);
+    }  
+    
   #endif // HAS_PRINT_PROGRESS
 
   //

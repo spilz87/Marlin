@@ -32,6 +32,8 @@
 #include "../module/planner.h"
 #include "../module/temperature.h"
 #include "../Marlin.h"
+// PHR
+#include <string.h>
 
 #if ENABLED(PRINTER_EVENT_LEDS)
   #include "../feature/leds/printer_event_leds.h"
@@ -740,7 +742,10 @@ uint32_t sdposLastTimeUpdate = 0;
     // PHR
     char commantaire_queue[MAX_CMD_SIZE] = {0};
     uint16_t commantaire_count = 0;
-    
+    unsigned long  printHeureL = 0;
+    unsigned long  printMinuteL = 0;
+    // String commentL = "";          
+    int separation = -1;
     
     uint16_t sd_count = 0;
     bool card_eof = card.eof();
@@ -764,7 +769,16 @@ uint32_t sdposLastTimeUpdate = 0;
           if (IS_SD_PRINTING())
             sd_count = 0; // If a sub-file was printing, continue from call point
           else {
-            SERIAL_ECHOLNPGM(MSG_FILE_PRINTED);
+            //SERIAL_ECHOLNPGM(MSG_FILE_PRINTED);
+            
+            // PHR
+            SERIAL_ECHOLN("");
+            SERIAL_ECHO("Termine:");
+            SERIAL_ECHO(print_job_timer.duration()); // duree total imprimante
+            SERIAL_ECHO(":");
+            SERIAL_ECHOLN(printtime); // duree théorique
+            
+            
             #if ENABLED(PRINTER_EVENT_LEDS)
               printerEventLEDs.onPrintCompleted();
               #if HAS_RESUME_CONTINUE
@@ -798,6 +812,73 @@ uint32_t sdposLastTimeUpdate = 0;
 
         _commit_command(false);
       }
+      
+      // PHR
+      else if(sd_comment_mode){
+        if (sd_char == '\n' || sd_char == '\r'){
+          /*commantaire_queue[commantaire_count] = 0; //terminate string
+          // !PHR
+          commentL = String(commantaire_queue);
+          SERIAL_ECHO("\r\ncommentaire lu : ");
+          SERIAL_ECHOLN(commentL);
+          
+          // !PHR
+          // separation = commentL.indexOf(':');
+          // SERIAL_ECHO("\r\nseparation : ");
+          // SERIAL_ECHOLN(separation);
+          if(separation != -1){
+            String titreLoc = commentL.substring(0,separation);
+            String valueLoc = commentL.substring(separation+1);
+            // SERIAL_ECHO("Titre : ");
+            // SERIAL_ECHOLN(titreLoc);
+            // SERIAL_ECHO("Value : ");
+            // SERIAL_ECHOLN(valueLoc);
+          
+            if(titreLoc == "TIME"){
+              printtime = valueLoc.toInt();
+              tempsEcouleGCODE = 0;
+              sdposLastTimeUpdate = 0;
+              //SERIAL_ECHO(" temps impression ");
+              //SERIAL_ECHO(printtime);
+            }
+            if(titreLoc == "Print time"){   // ;Print time: 2 heures 6 minutes
+              if(valueLoc.indexOf('h') != -1)
+                printHeureL = valueLoc.substring(1,valueLoc.indexOf('h')).toInt();
+  
+              if(valueLoc.indexOf('m') != -1)
+                printMinuteL = valueLoc.substring(valueLoc.indexOf(' ',valueLoc.indexOf('h'))+1,valueLoc.indexOf('m')).toInt();
+
+              printtime = (printHeureL*60 + printMinuteL);
+              printtime *= 60;
+              tempsEcouleGCODE = 0;
+              //SERIAL_ECHO(" temps impression ");
+              //SERIAL_ECHOLN(printtime);
+            }
+            if(titreLoc == "TIME_ELAPSED"){
+            tempsEcouleGCODE = valueLoc.substring(0,valueLoc.indexOf('.')).toInt();
+            sdposLastTimeUpdate = card.getSdpos();
+            //SERIAL_ECHO(" temps passe ");
+            //SERIAL_ECHO(tempsEcouleGCODE);
+            //SERIAL_ECHO(" percent donne ");
+            //SERIAL_ECHOLN(card.percentDone001());
+            //unsigned long  ecoule = print_job_timer.duration();
+            //SERIAL_ECHO("Temps ecoule imprimante ");
+            //SERIAL_ECHOLN(ecoule);
+            //SERIAL_ECHO("Temps total:");
+            //SERIAL_ECHOLN(printtime);
+            // SERIAL_ECHO("fileNameLong:");
+            // SERIAL_ECHOLN(fileNameLong);
+            }
+          }*/
+          sd_comment_mode = false;
+          commantaire_count = 0;
+        }
+        else if (commantaire_count < MAX_CMD_SIZE - 1)
+          commantaire_queue[commantaire_count++] = sd_char;
+      }
+      
+      
+      
       else if (sd_count >= MAX_CMD_SIZE - 1) {
         /**
          * Keep fetching, but ignore normal characters beyond the max length

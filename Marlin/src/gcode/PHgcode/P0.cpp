@@ -18,16 +18,16 @@ extern uint32_t sdposLastTimeUpdate;
 
 #if ENABLED(SDSUPPORT)
 void GcodeSuite::P0() {
-  /*unsigned long  ecoule = print_job_timer.duration();
+  unsigned long  ecoule = print_job_timer.duration();
 
   unsigned long  printTimeRest = 0;
   if(printtime != 0){
     printTimeRest = (printtime-tempsEcouleGCODE)*(10000-card.percentDone001(sdposLastTimeUpdate));
     printTimeRest /= feedrate_percentage;
     printTimeRest /= 100;
-  }*/
+  }
         
-  /*SERIAL_ECHO("P0:");
+  SERIAL_ECHO("P0:");
   SERIAL_ECHO(printtime); // temps total
   SERIAL_ECHO(":");
   SERIAL_ECHO(card.percentDone001()); // Pourcentage fait
@@ -36,6 +36,6 @@ void GcodeSuite::P0() {
   SERIAL_ECHO(":");
   SERIAL_ECHO(ecoule); // temps écoulé imprimante
   SERIAL_ECHO(":");
-  card.printFilename(); // file name avec return*/
+  card.printFilename(); // file name avec return
 }
 #endif
