@@ -724,6 +724,8 @@ uint32_t sdposLastTimeUpdate = 0;
           if(array[i] == c){
             return i;
           }
+          if(array[i] == 0)
+            return -1;
       }
       return -1;
   }
@@ -753,6 +755,7 @@ uint32_t sdposLastTimeUpdate = 0;
   void copieArrays(char* origine, char* dest, int start, int length){
       for(int i=start;i<length;i++)
         dest[i] = origine[i];
+      dest[length] = 0;
   }
   
   inline void get_sdcard_commands() {
@@ -782,6 +785,11 @@ uint32_t sdposLastTimeUpdate = 0;
     char titreLoc[MAX_CMD_SIZE] = {0};
     char valueLoc[MAX_CMD_SIZE] = {0};
     char tempLoc[MAX_CMD_SIZE] = {0};
+    char charArray_TIME[5] = "TIME";
+    //char charArray_TIME[5] = {'T','I','M','E',0};
+    char charArray_Print_time[11] = "Print time";
+    char charArray_TIME_ELAPSED[13] = "TIME_ELAPSED";
+    //char charArray_TIME_ELAPSED[13] = {'T','I','M','E','_','E','L','A','P','S','E','D',0};
     int separation = -1;
     
     uint16_t sd_count = 0;
@@ -867,27 +875,22 @@ uint32_t sdposLastTimeUpdate = 0;
           separation = searchCharInArray(commantaire_queue, commantaire_count, ':');
            
           if(separation != -1){
-            for(int i = 0; i < separation; i++)
-                titreLoc[i] = commantaire_queue[i];
-            for(int i = separation+1; i <= commantaire_count; i++)
-                valueLoc[i] = commantaire_queue[i];
-            
-            //String titreLoc = commentL.substring(0,separation);
-            //String valueLoc = commentL.substring(separation+1);
+            copieArrays(commantaire_queue, titreLoc, 0, separation);
+            copieArrays(commantaire_queue, valueLoc, separation+1, commantaire_count - separation);
             
             SERIAL_ECHO("Titre : ");
             SERIAL_ECHOLN(titreLoc);
             SERIAL_ECHO("Value : ");
             SERIAL_ECHOLN(valueLoc);
             
-            if(compareArrays(titreLoc,"TIME",separation)){  
+            if(compareArrays(titreLoc,charArray_TIME,separation)){  
               printtime = convertArrayToInt(valueLoc);
               tempsEcouleGCODE = 0;
               sdposLastTimeUpdate = 0;
               SERIAL_ECHO(" temps impression ");
               SERIAL_ECHO(printtime);
             }
-            /*if(compareArrays(titreLoc,"Print time",separation)){    // ;Print time: 2 heures 6 minutes
+            /*if(compareArrays(titreLoc,charArray_Print_time,separation)){    // ;Print time: 2 heures 6 minutes
               if(searchCharInArray(valueLoc, commantaire_count - separation, 'h') != -1){
                 copieArrays(valueLoc,tempLoc,1,commantaire_count - separation);
                 printHeureL = convertArrayToInt(tempLoc);
@@ -905,7 +908,7 @@ uint32_t sdposLastTimeUpdate = 0;
               //SERIAL_ECHO(" temps impression ");
               //SERIAL_ECHOLN(printtime);
             }*/
-            if(compareArrays(titreLoc,"TIME_ELAPSED",separation)){
+            if(compareArrays(titreLoc,charArray_TIME_ELAPSED,separation)){
             tempsEcouleGCODE = convertArrayToInt(valueLoc);
             sdposLastTimeUpdate = card.getSdpos();
             SERIAL_ECHO(" temps passe ");

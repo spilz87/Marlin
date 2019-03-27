@@ -134,7 +134,7 @@
 // Please choose the name from boards.h that matches your setup
 #ifndef MOTHERBOARD
   // PHR
-  #define MOTHERBOARD BOARD_BIQU_SKR_V1_1 // BOARD_BIGTREE_SKR_V1_3
+  #define MOTHERBOARD BOARD_BIGTREE_SKR_V1_3 // BOARD_BIQU_SKR_V1_1 // 
 #endif
 
 // Optional custom name for your RepStrap or other custom machine
