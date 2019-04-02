@@ -1632,7 +1632,8 @@
 
 // Force SDCARD_SORT_ALPHA to be enabled for Graphical LCD on LPC1768
 // because of a bug in the shared SPI implementation. (See #8122)
-#if defined(TARGET_LPC1768) && ENABLED(REPRAP_DISCOUNT_FULL_GRAPHIC_SMART_CONTROLLER)
+// PHR
+/*#if defined(TARGET_LPC1768) && ENABLED(REPRAP_DISCOUNT_FULL_GRAPHIC_SMART_CONTROLLER)
   #define SDCARD_SORT_ALPHA         // Keeps one directory level in RAM. Changing
                                     // directory levels still glitches the screen,
                                     // but the following LCD update cleans it up.
@@ -1656,7 +1657,7 @@
   #ifndef SDSORT_CACHE_VFATS
     #define SDSORT_CACHE_VFATS 2
   #endif
-#endif
+#endif*/
 
 // needs to be here so that we catch the above changes to our defines
 #if ENABLED(SDCARD_SORT_ALPHA)

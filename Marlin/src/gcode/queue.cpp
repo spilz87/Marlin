@@ -721,6 +721,13 @@ uint32_t sdposLastTimeUpdate = 0;
    
   inline int searchCharInArray(char* array, int length, char c){
       for(int i = 0; i < length; i++){
+          SERIAL_ECHO("i");
+          SERIAL_ECHO(i);
+          SERIAL_ECHO(",c");
+          SERIAL_ECHO(c);
+          SERIAL_ECHO(",");
+          SERIAL_ECHO(array[i]);
+          SERIAL_ECHOLN(); // duree théorique
           if(array[i] == c){
             return i;
           }
@@ -731,6 +738,8 @@ uint32_t sdposLastTimeUpdate = 0;
   }
   
   inline long convertArrayToInt(char* array){
+      SERIAL_ECHO("First char:")
+      SERIAL_ECHOLN(array[0])
       if(!(array[0] >= '0' && array[0] <= '9'))
           return -1;
       
@@ -738,7 +747,15 @@ uint32_t sdposLastTimeUpdate = 0;
       int i=0;
       while((array[i] >= '0' && array[i] <= '9')){
           value *= 10;
-          value += array[i];
+          value += array[i]-'0';
+          SERIAL_ECHO("i");
+          SERIAL_ECHO(i);
+          SERIAL_ECHO(",c");
+          SERIAL_ECHO(array[i]);
+          SERIAL_ECHO(",v");
+          SERIAL_ECHO(value);
+          SERIAL_ECHOLN(); // duree théorique
+            
           i++;
       }
       return value;    
@@ -753,8 +770,8 @@ uint32_t sdposLastTimeUpdate = 0;
   }
   
   void copieArrays(char* origine, char* dest, int start, int length){
-      for(int i=start;i<length;i++)
-        dest[i] = origine[i];
+      for(int i=0;i<length;i++)
+        dest[i] = origine[start+i];
       dest[length] = 0;
   }
   
