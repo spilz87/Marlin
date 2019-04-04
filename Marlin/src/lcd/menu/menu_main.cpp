@@ -83,7 +83,8 @@
 #endif // MACHINE_CAN_PAUSE
 
 #if MACHINE_CAN_STOP
-
+  // PHR 
+  extern unsigned long printtime;
   void lcd_abort_job() {
     #if ENABLED(SDSUPPORT)
       wait_for_heatup = wait_for_user = false;
@@ -95,6 +96,7 @@
     #if ENABLED(HOST_PROMPT_SUPPORT)
       host_prompt_open(PROMPT_INFO, PSTR("UI Abort"));
     #endif
+    printtime = 0;
     ui.set_status_P(PSTR(MSG_PRINT_ABORTED), -1);
     ui.return_to_status();
   }

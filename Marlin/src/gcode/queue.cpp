@@ -737,11 +737,11 @@ uint32_t sdposLastTimeUpdate = 0;
       return -1;
   }
   
-  inline long convertArrayToInt(char* array){
-      SERIAL_ECHO("First char:")
-      SERIAL_ECHOLN(array[0])
+  inline unsigned long convertArrayToInt(char* array){
+      SERIAL_ECHO("First char:");
+      SERIAL_ECHOLN(array[0]);
       if(!(array[0] >= '0' && array[0] <= '9'))
-          return -1;
+          return NULL;
       
       long value = 0;
       int i=0;
@@ -840,7 +840,7 @@ uint32_t sdposLastTimeUpdate = 0;
             SERIAL_ECHO(":");
             SERIAL_ECHOLN(printtime); // duree théorique
             
-            
+            printtime = 0;
             #if ENABLED(PRINTER_EVENT_LEDS)
               printerEventLEDs.onPrintCompleted();
               #if HAS_RESUME_CONTINUE
@@ -890,6 +890,8 @@ uint32_t sdposLastTimeUpdate = 0;
           // SERIAL_ECHOLN(separation);
           
           separation = searchCharInArray(commantaire_queue, commantaire_count, ':');
+          SERIAL_ECHO("\r\nseparation : ");
+          SERIAL_ECHOLN(separation);
            
           if(separation != -1){
             copieArrays(commantaire_queue, titreLoc, 0, separation);
@@ -900,8 +902,10 @@ uint32_t sdposLastTimeUpdate = 0;
             SERIAL_ECHO("Value : ");
             SERIAL_ECHOLN(valueLoc);
             
-            if(compareArrays(titreLoc,charArray_TIME,separation)){  
+            if(compareArrays(titreLoc,charArray_TIME,separation+1)){  
               printtime = convertArrayToInt(valueLoc);
+              if(printtime == NULL)
+                  printtime = 0;
               tempsEcouleGCODE = 0;
               sdposLastTimeUpdate = 0;
               SERIAL_ECHO(" temps impression ");
@@ -925,7 +929,7 @@ uint32_t sdposLastTimeUpdate = 0;
               //SERIAL_ECHO(" temps impression ");
               //SERIAL_ECHOLN(printtime);
             }*/
-            if(compareArrays(titreLoc,charArray_TIME_ELAPSED,separation)){
+            if(compareArrays(titreLoc,charArray_TIME_ELAPSED,separation+1)){
             tempsEcouleGCODE = convertArrayToInt(valueLoc);
             sdposLastTimeUpdate = card.getSdpos();
             SERIAL_ECHO(" temps passe ");
