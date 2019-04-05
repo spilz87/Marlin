@@ -717,13 +717,13 @@ uint32_t sdposLastTimeUpdate = 0;
    
   inline int searchCharInArray(char* array, int length, char c){
       for(int i = 0; i < length; i++){
-          SERIAL_ECHO("i");
+          /*SERIAL_ECHO("i");
           SERIAL_ECHO(i);
           SERIAL_ECHO(",c");
           SERIAL_ECHO(c);
           SERIAL_ECHO(",");
           SERIAL_ECHO(array[i]);
-          SERIAL_ECHOLN(); // duree théorique
+          SERIAL_ECHOLN(); // duree théorique*/
           if(array[i] == c){
             return i;
           }
@@ -734,8 +734,8 @@ uint32_t sdposLastTimeUpdate = 0;
   }
   
   inline unsigned long convertArrayToInt(char* array){
-      SERIAL_ECHO("First char:");
-      SERIAL_ECHOLN(array[0]);
+      /*SERIAL_ECHO("First char:");
+      SERIAL_ECHOLN(array[0]);*/
       if(!(array[0] >= '0' && array[0] <= '9'))
           return NULL;
       
@@ -744,13 +744,13 @@ uint32_t sdposLastTimeUpdate = 0;
       while((array[i] >= '0' && array[i] <= '9')){
           value *= 10;
           value += array[i]-'0';
-          SERIAL_ECHO("i");
+          /*SERIAL_ECHO("i");
           SERIAL_ECHO(i);
           SERIAL_ECHO(",c");
           SERIAL_ECHO(array[i]);
           SERIAL_ECHO(",v");
           SERIAL_ECHO(value);
-          SERIAL_ECHOLN(); // duree théorique
+          SERIAL_ECHOLN(); // duree théorique*/
             
           i++;
       }
