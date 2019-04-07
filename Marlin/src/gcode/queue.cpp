@@ -799,6 +799,7 @@ uint32_t sdposLastTimeUpdate = 0;
     char valueLoc[MAX_CMD_SIZE] = {0};
     char tempLoc[MAX_CMD_SIZE] = {0};
     char charArray_TIME[5] = "TIME";
+    char charArray_S3DTIME[8] = "S3DTIME";
     //char charArray_TIME[5] = {'T','I','M','E',0};
     char charArray_Print_time[11] = "Print time";
     char charArray_TIME_ELAPSED[13] = "TIME_ELAPSED";
@@ -905,6 +906,17 @@ uint32_t sdposLastTimeUpdate = 0;
               tempsEcouleGCODE = 0;
               sdposLastTimeUpdate = 0;
               SERIAL_ECHO(" temps impression ");
+              SERIAL_ECHO(printtime);
+            }
+            if(compareArrays(titreLoc,charArray_S3DTIME,separation+1)){  
+              printtime = convertArrayToInt(valueLoc);
+              if(printtime == NULL)
+                  printtime = 0;
+              printtime *= 135;
+              printtime /= 100;
+              tempsEcouleGCODE = 0;
+              sdposLastTimeUpdate = 0;
+              SERIAL_ECHO(" temps impression +0.35 ");
               SERIAL_ECHO(printtime);
             }
             /*if(compareArrays(titreLoc,charArray_Print_time,separation)){    // ;Print time: 2 heures 6 minutes
