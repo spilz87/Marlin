@@ -53,6 +53,8 @@
 //
 // Filament Runout Sensor
 //
+// PHR
+#define FIL_RUNOUT_PIN P1_24
 #ifndef FIL_RUNOUT_PIN
   #define FIL_RUNOUT_PIN   P1_28
 #endif
