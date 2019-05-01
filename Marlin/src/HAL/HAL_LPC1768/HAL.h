@@ -149,7 +149,7 @@ using FilteredADC = LPC176x::ADC<ADC_LOWPASS_K_VALUE, ADC_MEDIAN_FILTER_SIZE>;
 
 // A grace period for the ADC readings to stabilize before they start causing thermal protection errors.
 // PHR
-#define THERMAL_PROTECTION_GRACE_PERIOD 1000
+#define THERMAL_PROTECTION_GRACE_PERIOD 5000
 
 // Parse a G-code word into a pin index
 int16_t PARSED_PIN_INDEX(const char code, const int16_t dval);
