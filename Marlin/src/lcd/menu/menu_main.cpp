@@ -84,7 +84,7 @@
 #endif // MACHINE_CAN_PAUSE
 
 #if MACHINE_CAN_STOP
-  // PHR 
+  // PHR
   extern unsigned long printtime;
   void lcd_abort_job() {
     #if ENABLED(SDSUPPORT)
@@ -179,7 +179,7 @@ void menu_main() {
 
       if (card_detected) {
         if (!card_open) {
-          MENU_ITEM(submenu, MSG_CARD_MENU, menu_sdcard);
+          // PHR
           MENU_ITEM(gcode,
             #if PIN_EXISTS(SD_DETECT)
               MSG_CHANGE_SDCARD, PSTR("M21")
@@ -187,6 +187,7 @@ void menu_main() {
               MSG_RELEASE_SDCARD, PSTR("M22")
             #endif
           );
+          MENU_ITEM(submenu, MSG_CARD_MENU, menu_sdcard);
         }
       }
       else {
@@ -266,7 +267,7 @@ void menu_main() {
 
     if (card_detected) {
       if (!card_open) {
-        MENU_ITEM(submenu, MSG_CARD_MENU, menu_sdcard);
+        // PHR
         MENU_ITEM(gcode,
           #if PIN_EXISTS(SD_DETECT)
             MSG_CHANGE_SDCARD, PSTR("M21")
@@ -274,6 +275,7 @@ void menu_main() {
             MSG_RELEASE_SDCARD, PSTR("M22")
           #endif
         );
+        MENU_ITEM(submenu, MSG_CARD_MENU, menu_sdcard);
       }
     }
     else {
