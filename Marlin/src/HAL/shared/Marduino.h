@@ -19,23 +19,32 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-
-#include "../../inc/MarlinConfig.h"
-
-#if ENABLED(SDSUPPORT)
-
-#include "../gcode.h"
-#include "../../sd/cardreader.h"
+#pragma once
 
 /**
- * M23: Open a file
- *
- * The path is relative to the root directory
+ * HAL/shared/Marduino.h
  */
-void GcodeSuite::M23() {
-  // Simplify3D includes the size, so zero out all spaces (#7227)
-  for (char *fn = parser.string_arg; *fn; ++fn) if (*fn == ' ') *fn = '\0';
-  card.openFile(parser.string_arg, true);
-}
 
-#endif // SDSUPPORT
+#undef DISABLED       // Redefined by ESP32
+#undef M_PI           // Redefined by all
+#undef _BV            // Redefined by some
+#undef sq             // Redefined by teensy3/wiring.h
+
+#include <Arduino.h>  // NOTE: If included earlier then this line is a NOOP
+
+#undef DISABLED
+#define DISABLED(V...) DO(DIS,&&,V)
+
+#undef _BV
+#define _BV(b) (1UL << (b))
+
+#undef sq
+#define sq(x) ((x)*(x))
+
+#ifndef SBI
+  #define SBI(A,B) (A |= (1 << (B)))
+#endif
+
+#ifndef CBI
+  #define CBI(A,B) (A &= ~(1 << (B)))
+#endif
