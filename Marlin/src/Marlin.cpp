@@ -324,7 +324,8 @@ void disable_all_steppers() {
 #if HAS_FILAMENT_SENSOR
 
   void event_filament_runout() {
-
+    // PHR
+    SERIAL_ERROR_MSG("Filament runout");
     #if ENABLED(ADVANCED_PAUSE_FEATURE)
       if (did_pause_print) return;  // Action already in progress. Purge triggered repeated runout.
     #endif
