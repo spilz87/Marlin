@@ -652,8 +652,6 @@ const char* CardReader::diveToFile(SdFile*& curDir, const char * const path, con
   SdFile *sub = &newDir1, *startDir;
 
   const char *dirname_start = path;
-  char echo_fn[105];
-  
   if (path[0] == '/') { 
     curDir = &root;
     workDirDepth = 0;
@@ -1043,7 +1041,7 @@ void CardReader::printingHasFinished() {
 
 #if ENABLED(POWER_LOSS_RECOVERY)
 
-  constexpr char job_recovery_file_name[4] = "PLR";
+  constexpr char job_recovery_file_name[5] = "/PLR";
 
   bool CardReader::jobRecoverFileExists() {
     const bool exists = recovery.file.open(&root, job_recovery_file_name, O_READ);

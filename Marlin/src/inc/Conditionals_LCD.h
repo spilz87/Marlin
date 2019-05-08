@@ -329,8 +329,14 @@
   #define ULTRA_LCD
 #endif
 
+// Extensible UI serial touch screens. (See src/lcd/extensible_ui)
+#if ENABLED(MALYAN_LCD)
+  #define EXTENSIBLE_UI
+#endif
+
 // Aliases for LCD features
 #define HAS_SPI_LCD          ENABLED(ULTRA_LCD)
+#define HAS_DISPLAY         (HAS_SPI_LCD || ENABLED(EXTENSIBLE_UI))
 #define HAS_GRAPHICAL_LCD    ENABLED(DOGLCD)
 #define HAS_CHARACTER_LCD   (HAS_SPI_LCD && !HAS_GRAPHICAL_LCD)
 #define HAS_LCD_MENU        (ENABLED(ULTIPANEL) && DISABLED(NO_LCD_MENUS))
@@ -464,9 +470,6 @@
   #if NUM_SERVOS == 1
     #undef SERVO_DELAY
     #define SERVO_DELAY { 50 }
-  #endif
-  #ifndef BLTOUCH_DELAY
-    #define BLTOUCH_DELAY 375
   #endif
 
   // Always disable probe pin inverting for BLTouch
