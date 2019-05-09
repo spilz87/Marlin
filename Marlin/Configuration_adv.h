@@ -584,7 +584,9 @@
 #if ENABLED(ULTIPANEL)
   #define MANUAL_FEEDRATE {50*60, 50*60, 4*60, 60} // Feedrates for manual moves along X, Y, Z, E from panel
   #define MANUAL_E_MOVES_RELATIVE // Show LCD extruder moves as relative rather than absolute positions
-  #define ULTIPANEL_FEEDMULTIPLY  // Comment to disable setting feedrate multiplier via encoder
+  // PHR
+  // #define ULTIPANEL_FEEDMULTIPLY  // Comment to disable setting feedrate multiplier via encoder
+  #define ULTIPANEL_FANSPEED  // Comment to disable setting fan speed via encoder
 #endif
 
 // @section extras
@@ -778,6 +780,14 @@
 #if ENABLED(BEEP_ON_FEEDRATE_CHANGE)
   #define FEEDRATE_CHANGE_BEEP_DURATION   10
   #define FEEDRATE_CHANGE_BEEP_FREQUENCY 440
+#endif
+
+// PHR
+// Play a beep when the fan speed is changed from the Status Screen
+// #define BEEP_ON_FAN_SPEED_CHANGE
+#if ENABLED(BEEP_ON_FAN_SPEED_CHANGE)
+  #define FAN_SPEED_CHANGE_BEEP_DURATION   10
+  #define FAN_SPEED_CHANGE_BEEP_FREQUENCY 440
 #endif
 
 // Include a page of printer information in the LCD Main Menu

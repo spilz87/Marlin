@@ -631,6 +631,12 @@ void menu_advanced_settings() {
       MENU_ITEM(function, MSG_SET_HOME_OFFSETS, _lcd_set_home_offsets);
     #endif
 
+    // PHR -affiché tout le temps, remonté au début de la liste
+    if (!printer_busy()) {
+      // M92 - Steps Per mm
+      MENU_ITEM(submenu, MSG_STEPS_PER_MM, menu_advanced_steps_per_mm);
+    }
+
     // M203 / M205 - Feedrate items
     MENU_ITEM(submenu, MSG_VELOCITY, menu_advanced_velocity);
 
@@ -639,13 +645,7 @@ void menu_advanced_settings() {
 
     // M205 - Max Jerk
     MENU_ITEM(submenu, MSG_JERK, menu_advanced_jerk);
-
-    // PHR
-    // if (!printer_busy()) {
-      // M92 - Steps Per mm
-      MENU_ITEM(submenu, MSG_STEPS_PER_MM, menu_advanced_steps_per_mm);
-    // }
-  #endif // !SLIM_LCD_MENUS
+#endif // !SLIM_LCD_MENUS
 
   #if ENABLED(BACKLASH_GCODE)
     MENU_ITEM(submenu, MSG_BACKLASH, menu_backlash);

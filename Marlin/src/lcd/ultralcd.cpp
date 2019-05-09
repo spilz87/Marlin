@@ -529,6 +529,46 @@ void MarlinUI::status_screen() {
 
   #endif // ULTIPANEL_FEEDMULTIPLY
 
+  // PHR
+  #if ENABLED(ULTIPANEL_FANSPEED) && FAN_COUNT > 0
+
+    const int16_t old_frm = thermalManager.lcd_fanSpeedActual(0);
+          int16_t encoderPositionPercent = int16_t(encoderPosition);
+          encoderPositionPercent *= 256;
+          encoderPositionPercent /= 100;
+          int16_t new_frm = old_frm + encoderPositionPercent;
+
+    // Dead zone at 100% feedrate
+    /*if (old_frm == 100) {
+      if (int16_t(encoderPosition) > ENCODER_FEEDRATE_DEADZONE)
+        new_frm -= ENCODER_FEEDRATE_DEADZONE;
+      else if (int16_t(encoderPosition) < -(ENCODER_FEEDRATE_DEADZONE))
+        new_frm += ENCODER_FEEDRATE_DEADZONE;
+      else
+        new_frm = old_frm;
+    }
+    else if ((old_frm < 100 && new_frm > 100) || (old_frm > 100 && new_frm < 100))
+      new_frm = 100;*/
+
+    new_frm = constrain(new_frm, 0, 255);
+
+    if (old_frm != new_frm) {
+      thermalManager.set_fan_speed(0, uint16_t(new_frm));
+      encoderPosition = 0;
+      #if ENABLED(BEEP_ON_FAN_SPEED_CHANGE)
+        static millis_t next_beep;
+        #ifndef GOT_MS
+          const millis_t ms = millis();
+        #endif
+        if (ELAPSED(ms, next_beep)) {
+          BUZZ(FAN_SPEED_CHANGE_BEEP_DURATION, FAN_SPEED_CHANGE_BEEP_FREQUENCY);
+          next_beep = ms + 500UL;
+        }
+      #endif
+    }
+
+  #endif // ULTIPANEL_FEEDMULTIPLY
+
   draw_status_screen();
 }
 

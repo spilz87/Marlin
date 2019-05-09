@@ -1598,7 +1598,9 @@
 // Cumulative offset to workspace to save some calculation
 #define HAS_WORKSPACE_OFFSET (HAS_POSITION_SHIFT && HAS_HOME_OFFSET)
 // M206 sets the home offset for Cartesian machines
-#define HAS_M206_COMMAND (HAS_HOME_OFFSET && !IS_SCARA)
+// PHR
+// #define HAS_M206_COMMAND (HAS_HOME_OFFSET && !IS_SCARA)
+#define HAS_M206_COMMAND false
 
 // LCD timeout to status screen default is 15s
 #ifndef LCD_TIMEOUT_TO_STATUS

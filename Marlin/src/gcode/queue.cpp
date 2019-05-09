@@ -715,16 +715,9 @@ uint32_t sdposLastTimeUpdate = 0;
    * or until the end of the file is reached. The special character '#'
    * can also interrupt buffering.
    */
-   
+
   inline int searchCharInArray(char* array, int length, char c){
       for(int i = 0; i < length; i++){
-          /*SERIAL_ECHO("i");
-          SERIAL_ECHO(i);
-          SERIAL_ECHO(",c");
-          SERIAL_ECHO(c);
-          SERIAL_ECHO(",");
-          SERIAL_ECHO(array[i]);
-          SERIAL_ECHOLN(); // duree théorique*/
           if(array[i] == c){
             return i;
           }
@@ -733,31 +726,21 @@ uint32_t sdposLastTimeUpdate = 0;
       }
       return -1;
   }
-  
+
   inline unsigned long convertArrayToInt(char* array){
-      /*SERIAL_ECHO("First char:");
-      SERIAL_ECHOLN(array[0]);*/
       if(!(array[0] >= '0' && array[0] <= '9'))
           return NULL;
-      
+
       long value = 0;
       int i=0;
       while((array[i] >= '0' && array[i] <= '9')){
           value *= 10;
           value += array[i]-'0';
-          /*SERIAL_ECHO("i");
-          SERIAL_ECHO(i);
-          SERIAL_ECHO(",c");
-          SERIAL_ECHO(array[i]);
-          SERIAL_ECHO(",v");
-          SERIAL_ECHO(value);
-          SERIAL_ECHOLN(); // duree théorique*/
-            
           i++;
       }
-      return value;    
+      return value;
   }
-  
+
   bool compareArrays(char* array1, char* array2, int maxSize){
     for(int i=0;i<maxSize;i++){
       if(array1[i] != array2[i])
@@ -765,13 +748,13 @@ uint32_t sdposLastTimeUpdate = 0;
     }
     return true;
   }
-  
+
   void copieArrays(char* origine, char* dest, int start, int length){
       for(int i=0;i<length;i++)
         dest[i] = origine[start+i];
       dest[length] = 0;
   }
-  
+
   inline void get_sdcard_commands() {
     static bool stop_buffering = false,
                 sd_comment_mode = false
@@ -806,7 +789,7 @@ uint32_t sdposLastTimeUpdate = 0;
     char charArray_TIME_ELAPSED[13] = "TIME_ELAPSED";
     //char charArray_TIME_ELAPSED[13] = {'T','I','M','E','_','E','L','A','P','S','E','D',0};
     int separation = -1;
-    
+
     uint16_t sd_count = 0;
     bool card_eof = card.eof();
     while (commands_in_queue < BUFSIZE && !card_eof && !stop_buffering) {
@@ -830,14 +813,14 @@ uint32_t sdposLastTimeUpdate = 0;
             sd_count = 0; // If a sub-file was printing, continue from call point
           else {
             //SERIAL_ECHOLNPGM(MSG_FILE_PRINTED);
-            
+
             // PHR
             SERIAL_ECHOLN("");
             SERIAL_ECHO("Termine:");
             SERIAL_ECHO(print_job_timer.duration()); // duree total imprimante
             SERIAL_ECHO(":");
             SERIAL_ECHOLN(printtime); // duree théorique
-            
+
             printtime = 0;
             #if ENABLED(PRINTER_EVENT_LEDS)
               printerEventLEDs.onPrintCompleted();
@@ -872,35 +855,35 @@ uint32_t sdposLastTimeUpdate = 0;
 
         _commit_command(false);
       }
-      
+
       // PHR
       else if(sd_comment_mode){
         if (sd_char == '\n' || sd_char == '\r'){
           commantaire_queue[commantaire_count] = 0; //terminate string
           // !PHR
           // commentL = String(commantaire_queue);
-          SERIAL_ECHO("\r\ncommentaire lu : ");
-          SERIAL_ECHOLN(commantaire_count);
-          
+          // SERIAL_ECHO("\r\ncommentaire lu : ");
+          // SERIAL_ECHOLN(commantaire_count);
+
           // !PHR
           // separation = commentL.indexOf(':');
           // SERIAL_ECHO("\r\nseparation : ");
           // SERIAL_ECHOLN(separation);
-          
+
           separation = searchCharInArray(commantaire_queue, commantaire_count, ':');
-          SERIAL_ECHO("\r\nseparation : ");
-          SERIAL_ECHOLN(separation);
-           
+          // SERIAL_ECHO("\r\nseparation : ");
+          // SERIAL_ECHOLN(separation);
+
           if(separation != -1){
             copieArrays(commantaire_queue, titreLoc, 0, separation);
             copieArrays(commantaire_queue, valueLoc, separation+1, commantaire_count - separation);
-            
+
             SERIAL_ECHO("Titre : ");
             SERIAL_ECHOLN(titreLoc);
             SERIAL_ECHO("Value : ");
             SERIAL_ECHOLN(valueLoc);
-            
-            if(compareArrays(titreLoc,charArray_TIME,separation+1)){  
+
+            if(compareArrays(titreLoc,charArray_TIME,separation+1)){
               printtime = convertArrayToInt(valueLoc);
               if(printtime == NULL)
                   printtime = 0;
@@ -909,7 +892,7 @@ uint32_t sdposLastTimeUpdate = 0;
               SERIAL_ECHO(" temps impression ");
               SERIAL_ECHO(printtime);
             }
-            if(compareArrays(titreLoc,charArray_S3DTIME,separation+1)){  
+            if(compareArrays(titreLoc,charArray_S3DTIME,separation+1)){
               printtime = convertArrayToInt(valueLoc);
               if(printtime == NULL)
                   printtime = 0;
@@ -925,13 +908,13 @@ uint32_t sdposLastTimeUpdate = 0;
                 copieArrays(valueLoc,tempLoc,1,commantaire_count - separation);
                 printHeureL = convertArrayToInt(tempLoc);
               }
-              
+
               if(searchCharInArray(valueLoc, commantaire_count - separation, 'm') != -1){
                 // printMinuteL = valueLoc.substring(valueLoc.indexOf(' ',valueLoc.indexOf('h'))+1,valueLoc.indexOf('m')).toInt();
                 copieArrays(valueLoc,tempLoc,1,commantaire_count - separation);
                 printMinuteL = convertArrayToInt(tempLoc);
               }
-              
+
               printtime = (printHeureL*60 + printMinuteL);
               printtime *= 60;
               tempsEcouleGCODE = 0;
@@ -960,9 +943,9 @@ uint32_t sdposLastTimeUpdate = 0;
         else if (commantaire_count < MAX_CMD_SIZE - 1)
           commantaire_queue[commantaire_count++] = sd_char;
       }
-      
-      
-      
+
+
+
       else if (sd_count >= MAX_CMD_SIZE - 1) {
         /**
          * Keep fetching, but ignore normal characters beyond the max length
